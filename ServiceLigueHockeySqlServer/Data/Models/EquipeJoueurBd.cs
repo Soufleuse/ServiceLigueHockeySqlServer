@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ServiceLigueHockey.Data.Models
+namespace ServiceLigueHockeySqlServer.Data.Models
 {
     [Table("EquipeJoueur")]
     public class EquipeJoueurBd

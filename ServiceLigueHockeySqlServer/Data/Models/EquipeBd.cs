@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ServiceLigueHockey.Data.Models
+namespace ServiceLigueHockeySqlServer.Data.Models
 {
     /// <summary>
     /// Classe représentant une équipe
@@ -23,5 +23,6 @@ namespace ServiceLigueHockey.Data.Models
         public int? EstDevenueEquipe { get; set; }
 
         public virtual ICollection<EquipeJoueurBd> listeEquipeJoueur { get; set; } = default!;
+        public virtual ICollection<StatsEquipeBd> listeStatsEquipe { get; set; } = default!;
     }
 }

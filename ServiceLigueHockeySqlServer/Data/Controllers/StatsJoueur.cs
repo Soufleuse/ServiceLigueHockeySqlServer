@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ServiceLigueHockey.Data;
-using ServiceLigueHockey.Data.Models;
-using ServiceLigueHockey.Data.Models.Dto;
+using ServiceLigueHockeySqlServer.Data;
+using ServiceLigueHockeySqlServer.Data.Models;
+using ServiceLigueHockeySqlServer.Data.Models.Dto;
 
-namespace ServiceLigueHockey.Data.Controllers
+namespace ServiceLigueHockeySqlServer.Data.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

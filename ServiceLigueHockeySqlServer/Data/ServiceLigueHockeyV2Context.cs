@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ServiceLigueHockey.Data.Models;
+using ServiceLigueHockeySqlServer.Data.Models;
 using Microsoft.EntityFrameworkCore.SqlServer;
 
-namespace ServiceLigueHockey.Data
+namespace ServiceLigueHockeySqlServer.Data
 {
     public class ServiceLigueHockeyContext : DbContext
     {
@@ -21,6 +21,8 @@ namespace ServiceLigueHockey.Data
         public DbSet<EquipeJoueurBd> equipeJoueur { get; set; } = default!;
 
         public DbSet<StatsJoueurBd> statsJoueurBd { get; set; } = default!;
+
+        public DbSet<StatsEquipeBd> statsEquipe { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -75,6 +77,15 @@ namespace ServiceLigueHockey.Data
                 .HasOne("Joueur")
                 .WithMany("listeStatsJoueur")
                 .HasForeignKey("JoueurId");
+
+            modelBuilder.Entity<StatsEquipeBd>().ToTable("StatsEquipe");
+            modelBuilder.Entity<StatsEquipeBd>()
+                .HasKey(o => new { o.EquipeId, o.AnneeStats });
+            modelBuilder.Entity<StatsEquipeBd>().Property(c => c.AnneeStats).IsRequired();
+            modelBuilder.Entity<StatsEquipeBd>()
+                .HasOne("Equipe")
+                .WithMany("listeStatsEquipe")
+                .HasForeignKey("EquipeId");
 
             // Ajout de données
             modelBuilder.Entity<EquipeBd>()
@@ -135,6 +146,11 @@ namespace ServiceLigueHockey.Data
                 new StatsJoueurBd { EquipeId = 1, JoueurId = 2, AnneeStats = 2018, NbButs = 1815, NbPasses = 10, NbPoints = 1825, NbPartiesJouees = 65, NbMinutesPenalites = 51, PlusseMoins = -2, ButsAlloues = 0, TirsAlloues = 0, Victoires = 0, Defaites = 0, DefaitesEnProlongation = 0, Nulles = 0, MinutesJouees = 500 },
                 new StatsJoueurBd { EquipeId = 1, JoueurId = 3, AnneeStats = 2018, NbButs = 1805, NbPasses = 24, NbPoints = 1829, NbPartiesJouees = 65, NbMinutesPenalites = 35, PlusseMoins = 25, ButsAlloues = 0, TirsAlloues = 0, Victoires = 0, Defaites = 0, DefaitesEnProlongation = 0, Nulles = 0, MinutesJouees = 500 },
                 new StatsJoueurBd { EquipeId = 1, JoueurId = 4, AnneeStats = 2018, NbButs = 1800, NbPasses = 0, NbPoints = 1800, NbPartiesJouees = 65, NbMinutesPenalites = 4, PlusseMoins = 0, ButsAlloues = 53, TirsAlloues = 564, Victoires = 9, Defaites = 2, DefaitesEnProlongation = 6, Nulles = 0, MinutesJouees = 1500 }
+                );
+
+            modelBuilder.Entity<StatsEquipeBd>()
+                .HasData(
+                new StatsEquipeBd { AnneeStats = 2023, EquipeId = 1, NbPartiesJouees = 82, NbVictoires = 60, NbDefaites = 10, NbDefProlo = 12, NbButsPour = 499, NbButsContre = 199 }
                 );
         }
     }

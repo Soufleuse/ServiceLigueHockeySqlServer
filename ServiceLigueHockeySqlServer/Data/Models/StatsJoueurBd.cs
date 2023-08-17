@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ServiceLigueHockey.Data.Models
+namespace ServiceLigueHockeySqlServer.Data.Models
 {
     [Table("StatsJoueur")]
     public class StatsJoueurBd

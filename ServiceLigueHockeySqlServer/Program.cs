@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using ServiceLigueHockey.Data;
+using ServiceLigueHockeySqlServer.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

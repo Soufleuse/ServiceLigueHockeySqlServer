@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ServiceLigueHockey.Data.Models
+namespace ServiceLigueHockeySqlServer.Data.Models
 {
     [Table("Joueur")]
     public class JoueurBd

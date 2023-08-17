@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ServiceLigueHockey.Data.Models.Dto
+namespace ServiceLigueHockeySqlServer.Data.Models.Dto
 {
     public class EquipeJoueurDto
     {
