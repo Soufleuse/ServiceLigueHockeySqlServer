@@ -43,7 +43,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         }
 
         [HttpGet("{equipeId}/{anneeStats}")]
-        public ActionResult<IQueryable<StatsEquipeDto>> GetStatsEquipe(int equipeId, short anneeStats)
+        public ActionResult<StatsEquipeDto> GetStatsEquipe(int equipeId, short anneeStats)
         {
             var retour = _context.statsEquipe
                 .Where(x => x.EquipeId == equipeId && x.AnneeStats == anneeStats)
@@ -57,7 +57,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                     NbButsPour = item.NbButsPour,
                     NbButsContre = item.NbButsContre,
                     EquipeId = item.EquipeId
-                });
+                })
+                .FirstOrDefault();
 
             if (retour == null)
             {
@@ -118,7 +119,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 NbDefProlo = statsEquipeDto.NbDefProlo,
                 NbButsPour = statsEquipeDto.NbButsPour,
                 NbButsContre = statsEquipeDto.NbButsContre,
-                EquipeId = statsEquipeDto.EquipeId,
+                EquipeId = statsEquipeDto.EquipeId/*,
                 Equipe = new EquipeBd {
                     Id = statsEquipeDto.EquipeId,
                     NomEquipe = statsEquipeDto.Equipe.NomEquipe,
@@ -127,7 +128,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                     AnneeFin = statsEquipeDto.Equipe.AnneeFin,
                     EstDevenueEquipe = statsEquipeDto.Equipe.EstDevenueEquipe,
                     listeEquipeJoueur = statsEquipeDto.Equipe.listeEquipeJoueur
-                }
+                }*/
             };
 
             _context.equipe.Attach(statsEquipeBd.Equipe);
