@@ -119,16 +119,16 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 NbDefProlo = statsEquipeDto.NbDefProlo,
                 NbButsPour = statsEquipeDto.NbButsPour,
                 NbButsContre = statsEquipeDto.NbButsContre,
-                EquipeId = statsEquipeDto.EquipeId/*,
+                EquipeId = statsEquipeDto.EquipeId,
                 Equipe = new EquipeBd {
                     Id = statsEquipeDto.EquipeId,
                     NomEquipe = statsEquipeDto.Equipe.NomEquipe,
                     Ville = statsEquipeDto.Equipe.Ville,
                     AnneeDebut = statsEquipeDto.Equipe.AnneeDebut,
                     AnneeFin = statsEquipeDto.Equipe.AnneeFin,
-                    EstDevenueEquipe = statsEquipeDto.Equipe.EstDevenueEquipe,
-                    listeEquipeJoueur = statsEquipeDto.Equipe.listeEquipeJoueur
-                }*/
+                    EstDevenueEquipe = statsEquipeDto.Equipe.EstDevenueEquipe/*,
+                    listeEquipeJoueur = statsEquipeDto.Equipe.listeEquipeJoueur*/
+                }
             };
 
             _context.equipe.Attach(statsEquipeBd.Equipe);
@@ -150,7 +150,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 }
             }
 
-            return CreatedAtAction("PostStatsEquipeBd", statsEquipeBd);
+            return CreatedAtAction("PostStatsEquipeBd", statsEquipeDto);
         }
 
         [HttpDelete("{id}/{annee}")]

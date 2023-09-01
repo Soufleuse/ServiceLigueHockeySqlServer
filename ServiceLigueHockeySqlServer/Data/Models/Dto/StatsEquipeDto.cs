@@ -19,6 +19,6 @@ namespace ServiceLigueHockeySqlServer.Data.Models.Dto
         public short NbButsContre { get; set; } = 0;
 
         public int EquipeId { get; set; }
-        //public virtual EquipeDto Equipe { get; set; } = default!;
+        public virtual EquipeDto Equipe { get; set; } = default!;
     }
 }
