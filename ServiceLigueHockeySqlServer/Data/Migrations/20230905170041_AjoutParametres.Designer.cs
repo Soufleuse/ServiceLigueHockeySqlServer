@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServiceLigueHockeySqlServer.Data;
 
@@ -11,9 +12,11 @@ using ServiceLigueHockeySqlServer.Data;
 namespace ServiceLigueHockeySqlServer.Data.Migrations
 {
     [DbContext(typeof(ServiceLigueHockeyContext))]
-    partial class ServiceLigueHockeyContextModelSnapshot : ModelSnapshot
+    [Migration("20230905170041_AjoutParametres")]
+    partial class AjoutParametres
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -445,12 +448,6 @@ namespace ServiceLigueHockeySqlServer.Data.Migrations
                             dateDebut = new DateTime(1995, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             dateFin = new DateTime(2004, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             valeur = "82"
-                        },
-                        new
-                        {
-                            nom = "AjoutSteve",
-                            dateDebut = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            valeur = "ma valeur"
                         });
                 });
 
