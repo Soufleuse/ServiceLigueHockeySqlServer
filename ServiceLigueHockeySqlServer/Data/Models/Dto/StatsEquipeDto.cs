@@ -4,21 +4,21 @@ namespace ServiceLigueHockeySqlServer.Data.Models.Dto
 {
     public class StatsEquipeDto
     {
-        public short AnneeStats { get; set; }
+        public short anneeStats { get; set; }
 
-        public short NbPartiesJouees { get; set; } = default;
+        public short nbPartiesJouees { get; set; } = default;
 
-        public short NbVictoires { get; set; } = default;
+        public short nbVictoires { get; set; } = default;
 
-        public short NbDefaites { get; set; } = default;
+        public short nbDefaites { get; set; } = default;
 
-        public short NbDefProlo { get; set; } = default;
+        public short nbDefProlo { get; set; } = default;
 
-        public short NbButsPour { get; set; } = 0;
+        public short nbButsPour { get; set; } = 0;
 
-        public short NbButsContre { get; set; } = 0;
+        public short nbButsContre { get; set; } = 0;
 
-        public int EquipeId { get; set; }
-        public virtual EquipeDto Equipe { get; set; } = default!;
+        public int equipeId { get; set; }
+        public virtual EquipeDto equipe { get; set; } = default!;
     }
 }

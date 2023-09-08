@@ -30,14 +30,22 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                    .OrderByDescending(x => x.NbVictoires)
                                    .Select(item => new StatsEquipeDto
                                    {
-                                       AnneeStats = item.AnneeStats,
-                                       NbPartiesJouees = item.NbPartiesJouees,
-                                       NbVictoires = item.NbVictoires,
-                                       NbDefaites = item.NbDefaites,
-                                       NbDefProlo = item.NbDefProlo,
-                                       NbButsPour = item.NbButsPour,
-                                       NbButsContre = item.NbButsContre,
-                                       EquipeId = item.EquipeId
+                                       anneeStats = item.AnneeStats,
+                                       nbPartiesJouees = item.NbPartiesJouees,
+                                       nbVictoires = item.NbVictoires,
+                                       nbDefaites = item.NbDefaites,
+                                       nbDefProlo = item.NbDefProlo,
+                                       nbButsPour = item.NbButsPour,
+                                       nbButsContre = item.NbButsContre,
+                                       equipeId = item.EquipeId,
+                                       equipe = new EquipeDto {
+                                            Id = item.Equipe.Id,
+                                            NomEquipe = item.Equipe.NomEquipe,
+                                            Ville = item.Equipe.Ville,
+                                            AnneeDebut = item.Equipe.AnneeDebut,
+                                            AnneeFin = item.Equipe.AnneeFin,
+                                            EstDevenueEquipe = item.Equipe.AnneeFin
+                                       }
                                    });
             return Ok(listeStatsEquipe);
         }
@@ -49,14 +57,22 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 .Where(x => x.EquipeId == equipeId && x.AnneeStats == anneeStats)
                 .OrderByDescending(x => x.NbVictoires)
                 .Select(item => new StatsEquipeDto {
-                    AnneeStats = anneeStats,
-                    NbPartiesJouees = item.NbPartiesJouees,
-                    NbVictoires = item.NbVictoires,
-                    NbDefaites = item.NbDefaites,
-                    NbDefProlo = item.NbDefProlo,
-                    NbButsPour = item.NbButsPour,
-                    NbButsContre = item.NbButsContre,
-                    EquipeId = item.EquipeId
+                    anneeStats = anneeStats,
+                    nbPartiesJouees = item.NbPartiesJouees,
+                    nbVictoires = item.NbVictoires,
+                    nbDefaites = item.NbDefaites,
+                    nbDefProlo = item.NbDefProlo,
+                    nbButsPour = item.NbButsPour,
+                    nbButsContre = item.NbButsContre,
+                    equipeId = item.EquipeId,
+                    equipe = new EquipeDto {
+                        Id = item.Equipe.Id,
+                        NomEquipe = item.Equipe.NomEquipe,
+                        Ville = item.Equipe.Ville,
+                        AnneeDebut = item.Equipe.AnneeDebut,
+                        AnneeFin = item.Equipe.AnneeFin,
+                        EstDevenueEquipe = item.Equipe.EstDevenueEquipe
+                    }
                 })
                 .FirstOrDefault();
 
@@ -68,23 +84,23 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return Ok(retour);
         }
 
-        [HttpPut("{id}/{annee}")]
-        public async Task<IActionResult> PutStatsEquipeBd(int id, short annee, StatsEquipeDto statsEquipeDto)
+        [HttpPut("{equipeId}/{annee}")]
+        public async Task<IActionResult> PutStatsEquipeBd(int equipeId, short annee, StatsEquipeDto statsEquipeDto)
         {
-            if (id != statsEquipeDto.EquipeId && annee != statsEquipeDto.AnneeStats)
+            if (equipeId != statsEquipeDto.equipeId && annee != statsEquipeDto.anneeStats)
             {
                 return BadRequest();
             }
 
             var statsEquipeBd = new StatsEquipeBd {
-                AnneeStats = statsEquipeDto.AnneeStats,
-                NbPartiesJouees = statsEquipeDto.NbPartiesJouees,
-                NbVictoires = statsEquipeDto.NbVictoires,
-                NbDefaites = statsEquipeDto.NbDefaites,
-                NbDefProlo = statsEquipeDto.NbDefProlo,
-                NbButsPour = statsEquipeDto.NbButsPour,
-                NbButsContre = statsEquipeDto.NbButsContre,
-                EquipeId = statsEquipeDto.EquipeId
+                AnneeStats = statsEquipeDto.anneeStats,
+                NbPartiesJouees = statsEquipeDto.nbPartiesJouees,
+                NbVictoires = statsEquipeDto.nbVictoires,
+                NbDefaites = statsEquipeDto.nbDefaites,
+                NbDefProlo = statsEquipeDto.nbDefProlo,
+                NbButsPour = statsEquipeDto.nbButsPour,
+                NbButsContre = statsEquipeDto.nbButsContre,
+                EquipeId = statsEquipeDto.equipeId
             };
 
             _context.Entry(statsEquipeBd).State = EntityState.Modified;
@@ -95,7 +111,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!StatsEquipeBdExists(id, annee))
+                if (!StatsEquipeBdExists(equipeId, annee))
                 {
                     return NotFound();
                 }
@@ -112,21 +128,21 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         public async Task<ActionResult<StatsEquipeDto>> PostStatsEquipeBd(StatsEquipeDto statsEquipeDto)
         {
             var statsEquipeBd = new StatsEquipeBd {
-                AnneeStats = statsEquipeDto.AnneeStats,
-                NbPartiesJouees = statsEquipeDto.NbPartiesJouees,
-                NbVictoires = statsEquipeDto.NbVictoires,
-                NbDefaites = statsEquipeDto.NbDefaites,
-                NbDefProlo = statsEquipeDto.NbDefProlo,
-                NbButsPour = statsEquipeDto.NbButsPour,
-                NbButsContre = statsEquipeDto.NbButsContre,
-                EquipeId = statsEquipeDto.EquipeId,
+                AnneeStats = statsEquipeDto.anneeStats,
+                NbPartiesJouees = statsEquipeDto.nbPartiesJouees,
+                NbVictoires = statsEquipeDto.nbVictoires,
+                NbDefaites = statsEquipeDto.nbDefaites,
+                NbDefProlo = statsEquipeDto.nbDefProlo,
+                NbButsPour = statsEquipeDto.nbButsPour,
+                NbButsContre = statsEquipeDto.nbButsContre,
+                EquipeId = statsEquipeDto.equipeId,
                 Equipe = new EquipeBd {
-                    Id = statsEquipeDto.EquipeId,
-                    NomEquipe = statsEquipeDto.Equipe.NomEquipe,
-                    Ville = statsEquipeDto.Equipe.Ville,
-                    AnneeDebut = statsEquipeDto.Equipe.AnneeDebut,
-                    AnneeFin = statsEquipeDto.Equipe.AnneeFin,
-                    EstDevenueEquipe = statsEquipeDto.Equipe.EstDevenueEquipe/*,
+                    Id = statsEquipeDto.equipeId,
+                    NomEquipe = statsEquipeDto.equipe.NomEquipe,
+                    Ville = statsEquipeDto.equipe.Ville,
+                    AnneeDebut = statsEquipeDto.equipe.AnneeDebut,
+                    AnneeFin = statsEquipeDto.equipe.AnneeFin,
+                    EstDevenueEquipe = statsEquipeDto.equipe.EstDevenueEquipe/*,
                     listeEquipeJoueur = statsEquipeDto.Equipe.listeEquipeJoueur*/
                 }
             };
@@ -153,7 +169,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return CreatedAtAction("PostStatsEquipeBd", statsEquipeDto);
         }
 
-        [HttpDelete("{id}/{annee}")]
+        /*[HttpDelete("{id}/{annee}")]
         public async Task<IActionResult> DeleteStatsEquipeBd(int id, short annee)
         {
             var statsEquipeBd = await _context.statsEquipe.FindAsync(id, annee);
@@ -166,7 +182,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
+        }*/
 
         private bool StatsEquipeBdExists(int id, short annee)
         {
