@@ -15,14 +15,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Début décommenter pour déployer sur Ubuntu Server
-// Laisser commenté pour tester en debug
+// Dï¿½but dï¿½commenter pour dï¿½ployer sur Ubuntu Server
+// Laisser commentï¿½ pour tester en debug
 /*builder.WebHost.ConfigureKestrel(serverOption =>
 {
     serverOption.Listen(IPAddress.Parse("10.0.0.5"), 5000);
     serverOption.Listen(IPAddress.Parse("127.0.0.1"), 5000);
 });*/
-// Fin décommenter pour déployer sur Ubuntu Server
+// Fin dï¿½commenter pour dï¿½ployer sur Ubuntu Server
 
 builder.Services.AddDbContext<ServiceLigueHockeyContext>(options => {
     //var connectionString =  builder.Configuration.GetConnectionString("mysqlConnection");
@@ -42,8 +42,8 @@ builder.Services.AddCors(options => {
         builder => {
             builder.WithOrigins("http://localhost:4900", "https://localhost:4900", "https://localhost:7166", "https://127.0.0.1:4900");
             builder.WithHeaders("Content-Type");
-            builder.WithMethods("*");
-            //builder.WithMethods("POST","GET","PUT","OPTIONS");
+            //builder.WithMethods("*");
+            builder.WithMethods("POST","GET","PUT","OPTIONS");
         });
 });
 
