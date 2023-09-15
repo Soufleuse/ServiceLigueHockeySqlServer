@@ -21,7 +21,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             _context = context;
         }
 
-        // GET: api/StatsJoueurBds/parannee/2020
+        // GET: api/StatsJoueur/parannee/2020
         [HttpGet("parannee/{annee}")]
         public ActionResult<IEnumerable<StatsJoueurDto>> GetStatsJoueurBd(short annee)
         {
@@ -69,7 +69,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return Ok(listeStats.ToList());
         }
 
-        // GET: api/StatsJoueurBds/5/2020
+        // GET: api/StatsJoueur/5/2020
         [HttpGet("{noJoueur}/{anneeStats}")]
         public ActionResult<StatsJoueurDto> GetStatsJoueurBd(int joueurId, short anneeStats)
         {
@@ -121,7 +121,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return Ok(retour);
         }
 
-        // PUT: api/StatsJoueurBds/5
+        // PUT: api/StatsJoueur/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}/{annee}")]
         public async Task<IActionResult> PutStatsJoueurBd(int id, short annee, StatsJoueurDto statsJoueurDto)
@@ -190,7 +190,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return NoContent();
         }
 
-        // POST: api/StatsJoueurBds
+        // POST: api/StatsJoueur
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<StatsJoueurDto>> PostStatsJoueurBd(StatsJoueurDto statsJoueurDto)
@@ -279,7 +279,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return CreatedAtAction("PostStatsJoueurBd", statsJoueurDto);
         }
 
-        // DELETE: api/StatsJoueurBds/5
+        // DELETE: api/StatsJoueur/5
         [HttpDelete("{id}/{annee}")]
         public async Task<IActionResult> DeleteStatsJoueurBd(int id, short annee)
         {

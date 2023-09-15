@@ -3,6 +3,7 @@ using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using ServiceLigueHockeySqlServer.Data;
+using System.Reflection.Metadata.Ecma335;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,11 +41,20 @@ builder.Services.AddDbContext<ServiceLigueHockeyContext>(options => {
 builder.Services.AddCors(options => {
     options.AddPolicy(name: monAllowSpecificOrigin,
         builder => {
-            builder.WithOrigins("http://localhost:4900", "https://localhost:4900", "https://localhost:7166", "https://127.0.0.1:4900");
-            builder.WithHeaders("Content-Type");
+            Func<string, bool> isMonOrigineAllowed = str => { return true; };
+            builder.SetIsOriginAllowed(isMonOrigineAllowed)
+                   .AllowAnyHeader()
+                   .AllowAnyMethod()
+                   .AllowCredentials();
+            //builder.WithOrigins("http://localhost:4900", "https://localhost:4900", "https://localhost:7166", "https://127.0.0.1:4900");
+            //builder.WithHeaders("Content-Type");
             //builder.WithMethods("*");
-            builder.WithMethods("POST","GET","PUT","OPTIONS");
+            //builder.WithMethods("POST","GET","PUT","OPTIONS");
         });
+    
+    /*options.AddDefaultPolicy(builder => {
+        builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
+    });*/
 });
 
 var app = builder.Build();
@@ -54,6 +64,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors(monAllowSpecificOrigin);
 }
 else
 {

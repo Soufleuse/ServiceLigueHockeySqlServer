@@ -10,7 +10,7 @@ using ServiceLigueHockeySqlServer.Data.Models.Dto;
 namespace ServiceLigueHockeySqlServer.Data.Controllers
 {
     /*
-     * Controlleur pour JoueurBd
+     * Controlleur pour Joueur
      */
     [ApiController]
     [Route("api/[controller]")]
@@ -23,7 +23,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             _context = context;
         }
 
-        // GET: api/JoueurBds
+        // GET: api/Joueur
         [HttpGet]
         public ActionResult<IQueryable<JoueurDto>> GetJoueurBd()
         {
@@ -40,7 +40,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return Ok(listeJoueur);
         }
 
-        // GET: api/JoueurBds/5
+        // GET: api/Joueur/5
         [HttpGet("{id}")]
         public async Task<ActionResult<JoueurDto>> GetJoueurBd(int id)
         {
@@ -64,7 +64,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return Ok(joueurDto);
         }
 
-        // PUT: api/JoueurBds/5
+        // PUT: api/Joueur/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutJoueurBd(int id, JoueurBd joueurBd)
@@ -95,7 +95,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return NoContent();
         }
 
-        // POST: api/JoueurBds
+        // POST: api/Joueur
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<JoueurDto>> PostJoueurDto(JoueurDto joueur)
@@ -118,7 +118,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return CreatedAtAction("PostJoueurDto", joueur);
         }
 
-        // DELETE: api/JoueurBds/5
+        // DELETE: api/Joueur/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteJoueurBd(int id)
         {

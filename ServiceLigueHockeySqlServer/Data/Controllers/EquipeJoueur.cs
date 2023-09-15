@@ -40,20 +40,24 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             var retour = new List<EquipeJoueurDto>();
             foreach (var item in listeEquipeJoueur)
             {
-                var unJoueur = _context.joueur.Find(item.JoueurId);
-
-                if(unJoueur == null) unJoueur = new JoueurBd();
 
                 retour.Add(new EquipeJoueurDto
                 {
                     EquipeId = item.EquipeId,
                     JoueurId = item.JoueurId,
                     NoDossard = item.NoDossard,
-                    PrenomNomJoueur = unJoueur.Prenom + " " + unJoueur.Nom,
                     DateDebutAvecEquipe = item.DateDebutAvecEquipe,
                     DateFinAvecEquipe = item.DateFinAvecEquipe
                 });
             }
+
+            retour.ForEach(monJoueur =>
+            {
+                var unJoueur = _context.joueur.Find(monJoueur.JoueurId);
+
+                if(unJoueur == null) unJoueur = new JoueurBd();
+                monJoueur.PrenomNomJoueur = unJoueur.Prenom + " " + unJoueur.Nom;
+            });
 
             return Ok(retour);
         }
