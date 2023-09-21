@@ -70,11 +70,11 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         }
 
         // GET: api/StatsJoueur/5/2020
-        [HttpGet("{noJoueur}/{anneeStats}")]
-        public ActionResult<StatsJoueurDto> GetStatsJoueurBd(int joueurId, short anneeStats)
+        [HttpGet("{id}/{anneeStats}")]
+        public ActionResult<StatsJoueurDto> GetStatsJoueurBd(int id, short anneeStats)
         {
             var retour = _context.statsJoueurBd
-                .Where(x => x.JoueurId == joueurId && x.AnneeStats == anneeStats)
+                .Where(x => x.JoueurId == id && x.AnneeStats == anneeStats)
                 .Select(statsJoueurBd => new StatsJoueurDto
                 {
                     JoueurId = statsJoueurBd.JoueurId,
@@ -121,7 +121,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return Ok(retour);
         }
 
-        // PUT: api/StatsJoueur/5
+        // PUT: api/StatsJoueur/5/2023
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}/{annee}")]
         public async Task<IActionResult> PutStatsJoueurBd(int id, short annee, StatsJoueurDto statsJoueurDto)
