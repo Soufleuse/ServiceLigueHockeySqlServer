@@ -1,8 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ServiceLigueHockeySqlServer.Data.Models;
-using Microsoft.EntityFrameworkCore.SqlServer;
-//using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ServiceLigueHockeySqlServer.Data
 {
@@ -16,6 +13,8 @@ namespace ServiceLigueHockeySqlServer.Data
         }
 
         public DbSet<EquipeBd> equipe { get; set; } = default!;
+
+        public DbSet<AlignementBd> alignements { get; set; } = default!;
 
         public DbSet<JoueurBd> joueur { get; set; } = default!;
 
@@ -59,6 +58,7 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<EquipeBd>().Property(x => x.NomEquipe).HasMaxLength(50);
             modelBuilder.Entity<EquipeBd>().Property(x => x.Ville).HasMaxLength(50);
             modelBuilder.Entity<EquipeBd>().HasMany("listeEquipeJoueur").WithOne("Equipe");
+            modelBuilder.Entity<EquipeBd>().HasMany("listeAlignement").WithOne("equipe");
 
             modelBuilder.Entity<JoueurBd>().ToTable("Joueur");
             modelBuilder.Entity<JoueurBd>().HasKey(c => c.Id);
@@ -68,6 +68,7 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<JoueurBd>().Property(c => c.VilleNaissance).HasMaxLength(50);
             modelBuilder.Entity<JoueurBd>().Property(c => c.PaysOrigine).HasMaxLength(50);
             modelBuilder.Entity<JoueurBd>().HasMany("listeEquipeJoueur").WithOne("Joueur");
+            modelBuilder.Entity<JoueurBd>().HasMany("listeAlignement").WithOne("joueur");
 
             modelBuilder.Entity<EquipeJoueurBd>().ToTable("EquipeJoueur");
             modelBuilder.Entity<EquipeJoueurBd>()
@@ -98,6 +99,18 @@ namespace ServiceLigueHockeySqlServer.Data
                 .HasOne("Equipe")
                 .WithMany("listeStatsEquipe")
                 .HasForeignKey("EquipeId");
+            
+            modelBuilder.Entity<AlignementBd>().ToTable("Alignement");
+            modelBuilder.Entity<AlignementBd>()
+                .HasKey(o => new { o.Id });
+            modelBuilder.Entity<AlignementBd>()
+                .HasOne("equipe")
+                .WithMany("listeAlignement")
+                .HasForeignKey("EquipeId");
+            modelBuilder.Entity<AlignementBd>()
+                .HasOne("joueur")
+                .WithMany("listeAlignement")
+                .HasForeignKey("JoueurId");
 
             modelBuilder.Entity<ParametresBd>().ToTable("Parametres");
             modelBuilder.Entity<ParametresBd>().HasKey(c => new { c.nom, c.dateDebut });
@@ -169,7 +182,12 @@ namespace ServiceLigueHockeySqlServer.Data
 
             modelBuilder.Entity<StatsEquipeBd>()
                 .HasData(
-                new StatsEquipeBd { AnneeStats = 2023, EquipeId = 1, NbPartiesJouees = 82, NbVictoires = 60, NbDefaites = 10, NbDefProlo = 12, NbButsPour = 499, NbButsContre = 199 }
+                    new StatsEquipeBd { AnneeStats = 2023, EquipeId = 1, NbPartiesJouees = 82, NbVictoires = 60, NbDefaites = 10, NbDefProlo = 12, NbButsPour = 499, NbButsContre = 199 }
+                );
+            
+            modelBuilder.Entity<AlignementBd>()
+                .HasData(
+                    new AlignementBd { Id = 1, EquipeId = 1, JoueurId = 1, DateDebut = new DateTime(2016, 9, 3), DateFin = null}
                 );
 
             modelBuilder.Entity<ParametresBd>()

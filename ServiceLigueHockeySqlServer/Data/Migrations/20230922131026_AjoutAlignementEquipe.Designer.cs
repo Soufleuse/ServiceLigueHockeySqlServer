@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServiceLigueHockeySqlServer.Data;
 
@@ -11,9 +12,11 @@ using ServiceLigueHockeySqlServer.Data;
 namespace ServiceLigueHockeySqlServer.Data.Migrations
 {
     [DbContext(typeof(ServiceLigueHockeyContext))]
-    partial class ServiceLigueHockeyContextModelSnapshot : ModelSnapshot
+    [Migration("20230922131026_AjoutAlignementEquipe")]
+    partial class AjoutAlignementEquipe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -825,21 +828,21 @@ namespace ServiceLigueHockeySqlServer.Data.Migrations
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.AlignementBd", b =>
                 {
-                    b.HasOne("ServiceLigueHockeySqlServer.Data.Models.EquipeBd", "equipe")
+                    b.HasOne("ServiceLigueHockeySqlServer.Data.Models.EquipeBd", "Equipe")
                         .WithMany("listeAlignement")
                         .HasForeignKey("EquipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ServiceLigueHockeySqlServer.Data.Models.JoueurBd", "joueur")
+                    b.HasOne("ServiceLigueHockeySqlServer.Data.Models.JoueurBd", "Joueur")
                         .WithMany("listeAlignement")
                         .HasForeignKey("JoueurId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("equipe");
+                    b.Navigation("Equipe");
 
-                    b.Navigation("joueur");
+                    b.Navigation("Joueur");
                 });
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.EquipeJoueurBd", b =>
