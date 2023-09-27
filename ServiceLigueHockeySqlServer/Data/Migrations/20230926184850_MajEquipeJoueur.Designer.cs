@@ -12,8 +12,8 @@ using ServiceLigueHockeySqlServer.Data;
 namespace ServiceLigueHockeySqlServer.Data.Migrations
 {
     [DbContext(typeof(ServiceLigueHockeyContext))]
-    [Migration("20230922131026_AjoutAlignementEquipe")]
-    partial class AjoutAlignementEquipe
+    [Migration("20230926184850_MajEquipeJoueur")]
+    partial class MajEquipeJoueur
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,44 +24,6 @@ namespace ServiceLigueHockeySqlServer.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.AlignementBd", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DateDebut")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateFin")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("EquipeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("JoueurId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EquipeId");
-
-                    b.HasIndex("JoueurId");
-
-                    b.ToTable("Alignement", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DateDebut = new DateTime(2016, 9, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EquipeId = 1,
-                            JoueurId = 1
-                        });
-                });
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.EquipeBd", b =>
                 {
@@ -141,11 +103,11 @@ namespace ServiceLigueHockeySqlServer.Data.Migrations
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.EquipeJoueurBd", b =>
                 {
-                    b.Property<int>("EquipeId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("JoueurId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("DateDebutAvecEquipe")
                         .HasColumnType("datetime2");
@@ -153,105 +115,127 @@ namespace ServiceLigueHockeySqlServer.Data.Migrations
                     b.Property<DateTime?>("DateFinAvecEquipe")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("EquipeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("JoueurId")
+                        .HasColumnType("int");
+
                     b.Property<short>("NoDossard")
                         .HasColumnType("smallint");
 
-                    b.HasKey("EquipeId", "JoueurId", "DateDebutAvecEquipe");
+                    b.HasKey("Id");
 
                     b.HasIndex("JoueurId");
+
+                    b.HasIndex("EquipeId", "JoueurId", "DateDebutAvecEquipe")
+                        .IsUnique();
 
                     b.ToTable("EquipeJoueur", (string)null);
 
                     b.HasData(
                         new
                         {
+                            Id = 1,
+                            DateDebutAvecEquipe = new DateTime(2008, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 1,
                             JoueurId = 1,
-                            DateDebutAvecEquipe = new DateTime(2008, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)23
                         },
                         new
                         {
+                            Id = 2,
+                            DateDebutAvecEquipe = new DateTime(2016, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 1,
                             JoueurId = 2,
-                            DateDebutAvecEquipe = new DateTime(2016, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)24
                         },
                         new
                         {
+                            Id = 3,
+                            DateDebutAvecEquipe = new DateTime(2017, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 1,
                             JoueurId = 3,
-                            DateDebutAvecEquipe = new DateTime(2017, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)25
                         },
                         new
                         {
+                            Id = 4,
+                            DateDebutAvecEquipe = new DateTime(2013, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 1,
                             JoueurId = 4,
-                            DateDebutAvecEquipe = new DateTime(2013, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)26
                         },
                         new
                         {
+                            Id = 5,
+                            DateDebutAvecEquipe = new DateTime(2014, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 2,
                             JoueurId = 5,
-                            DateDebutAvecEquipe = new DateTime(2014, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)27
                         },
                         new
                         {
+                            Id = 6,
+                            DateDebutAvecEquipe = new DateTime(2020, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 2,
                             JoueurId = 6,
-                            DateDebutAvecEquipe = new DateTime(2020, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)28
                         },
                         new
                         {
+                            Id = 7,
+                            DateDebutAvecEquipe = new DateTime(2018, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 2,
                             JoueurId = 7,
-                            DateDebutAvecEquipe = new DateTime(2018, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)29
                         },
                         new
                         {
+                            Id = 8,
+                            DateDebutAvecEquipe = new DateTime(2010, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 2,
                             JoueurId = 8,
-                            DateDebutAvecEquipe = new DateTime(2010, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)30
                         },
                         new
                         {
+                            Id = 9,
+                            DateDebutAvecEquipe = new DateTime(2018, 4, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 3,
                             JoueurId = 9,
-                            DateDebutAvecEquipe = new DateTime(2018, 4, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)31
                         },
                         new
                         {
+                            Id = 10,
+                            DateDebutAvecEquipe = new DateTime(2018, 2, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 3,
                             JoueurId = 10,
-                            DateDebutAvecEquipe = new DateTime(2018, 2, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)32
                         },
                         new
                         {
+                            Id = 11,
+                            DateDebutAvecEquipe = new DateTime(2018, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 3,
                             JoueurId = 11,
-                            DateDebutAvecEquipe = new DateTime(2018, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)33
                         },
                         new
                         {
+                            Id = 12,
+                            DateDebutAvecEquipe = new DateTime(2011, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 4,
                             JoueurId = 12,
-                            DateDebutAvecEquipe = new DateTime(2011, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)34
                         },
                         new
                         {
+                            Id = 13,
+                            DateDebutAvecEquipe = new DateTime(2012, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 4,
                             JoueurId = 13,
-                            DateDebutAvecEquipe = new DateTime(2012, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NoDossard = (short)35
                         });
                 });
@@ -826,25 +810,6 @@ namespace ServiceLigueHockeySqlServer.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.AlignementBd", b =>
-                {
-                    b.HasOne("ServiceLigueHockeySqlServer.Data.Models.EquipeBd", "Equipe")
-                        .WithMany("listeAlignement")
-                        .HasForeignKey("EquipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ServiceLigueHockeySqlServer.Data.Models.JoueurBd", "Joueur")
-                        .WithMany("listeAlignement")
-                        .HasForeignKey("JoueurId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Equipe");
-
-                    b.Navigation("Joueur");
-                });
-
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.EquipeJoueurBd", b =>
                 {
                     b.HasOne("ServiceLigueHockeySqlServer.Data.Models.EquipeBd", "Equipe")
@@ -896,8 +861,6 @@ namespace ServiceLigueHockeySqlServer.Data.Migrations
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.EquipeBd", b =>
                 {
-                    b.Navigation("listeAlignement");
-
                     b.Navigation("listeEquipeJoueur");
 
                     b.Navigation("listeStatsEquipe");
@@ -905,8 +868,6 @@ namespace ServiceLigueHockeySqlServer.Data.Migrations
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.JoueurBd", b =>
                 {
-                    b.Navigation("listeAlignement");
-
                     b.Navigation("listeEquipeJoueur");
 
                     b.Navigation("listeStatsJoueur");

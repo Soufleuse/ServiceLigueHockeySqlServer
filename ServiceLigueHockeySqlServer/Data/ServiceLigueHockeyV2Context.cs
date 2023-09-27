@@ -14,8 +14,6 @@ namespace ServiceLigueHockeySqlServer.Data
 
         public DbSet<EquipeBd> equipe { get; set; } = default!;
 
-        public DbSet<AlignementBd> alignements { get; set; } = default!;
-
         public DbSet<JoueurBd> joueur { get; set; } = default!;
 
         public DbSet<EquipeJoueurBd> equipeJoueur { get; set; } = default!;
@@ -58,7 +56,6 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<EquipeBd>().Property(x => x.NomEquipe).HasMaxLength(50);
             modelBuilder.Entity<EquipeBd>().Property(x => x.Ville).HasMaxLength(50);
             modelBuilder.Entity<EquipeBd>().HasMany("listeEquipeJoueur").WithOne("Equipe");
-            modelBuilder.Entity<EquipeBd>().HasMany("listeAlignement").WithOne("equipe");
 
             modelBuilder.Entity<JoueurBd>().ToTable("Joueur");
             modelBuilder.Entity<JoueurBd>().HasKey(c => c.Id);
@@ -68,11 +65,13 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<JoueurBd>().Property(c => c.VilleNaissance).HasMaxLength(50);
             modelBuilder.Entity<JoueurBd>().Property(c => c.PaysOrigine).HasMaxLength(50);
             modelBuilder.Entity<JoueurBd>().HasMany("listeEquipeJoueur").WithOne("Joueur");
-            modelBuilder.Entity<JoueurBd>().HasMany("listeAlignement").WithOne("joueur");
 
             modelBuilder.Entity<EquipeJoueurBd>().ToTable("EquipeJoueur");
             modelBuilder.Entity<EquipeJoueurBd>()
-                .HasKey(o => new { o.EquipeId, o.JoueurId, o.DateDebutAvecEquipe });
+                .HasKey(o => new { o.Id });
+            modelBuilder.Entity<EquipeJoueurBd>()
+                .HasIndex(d => new { d.EquipeId, d.JoueurId, d.DateDebutAvecEquipe })
+                .IsUnique();
             modelBuilder.Entity<EquipeJoueurBd>()
                 .HasOne(p => p.Joueur)
                 .WithMany(p => p.listeEquipeJoueur)
@@ -99,18 +98,6 @@ namespace ServiceLigueHockeySqlServer.Data
                 .HasOne("Equipe")
                 .WithMany("listeStatsEquipe")
                 .HasForeignKey("EquipeId");
-            
-            modelBuilder.Entity<AlignementBd>().ToTable("Alignement");
-            modelBuilder.Entity<AlignementBd>()
-                .HasKey(o => new { o.Id });
-            modelBuilder.Entity<AlignementBd>()
-                .HasOne("equipe")
-                .WithMany("listeAlignement")
-                .HasForeignKey("EquipeId");
-            modelBuilder.Entity<AlignementBd>()
-                .HasOne("joueur")
-                .WithMany("listeAlignement")
-                .HasForeignKey("JoueurId");
 
             modelBuilder.Entity<ParametresBd>().ToTable("Parametres");
             modelBuilder.Entity<ParametresBd>().HasKey(c => new { c.nom, c.dateDebut });
@@ -149,19 +136,19 @@ namespace ServiceLigueHockeySqlServer.Data
 
             modelBuilder.Entity<EquipeJoueurBd>()
                 .HasData(
-                new EquipeJoueurBd { EquipeId = 1, JoueurId = 1, NoDossard = 23, DateDebutAvecEquipe = new DateTime(2008, 9, 30), DateFinAvecEquipe = null },
-                new EquipeJoueurBd { EquipeId = 1, JoueurId = 2, NoDossard = 24, DateDebutAvecEquipe = new DateTime(2016, 9, 30), DateFinAvecEquipe = null },
-                new EquipeJoueurBd { EquipeId = 1, JoueurId = 3, NoDossard = 25, DateDebutAvecEquipe = new DateTime(2017, 9, 30), DateFinAvecEquipe = null },
-                new EquipeJoueurBd { EquipeId = 1, JoueurId = 4, NoDossard = 26, DateDebutAvecEquipe = new DateTime(2013, 9, 30), DateFinAvecEquipe = null },
-                new EquipeJoueurBd { EquipeId = 2, JoueurId = 5, NoDossard = 27, DateDebutAvecEquipe = new DateTime(2014, 9, 30), DateFinAvecEquipe = null },
-                new EquipeJoueurBd { EquipeId = 2, JoueurId = 6, NoDossard = 28, DateDebutAvecEquipe = new DateTime(2020, 11, 30), DateFinAvecEquipe = null },
-                new EquipeJoueurBd { EquipeId = 2, JoueurId = 7, NoDossard = 29, DateDebutAvecEquipe = new DateTime(2018, 1, 15), DateFinAvecEquipe = null },
-                new EquipeJoueurBd { EquipeId = 2, JoueurId = 8, NoDossard = 30, DateDebutAvecEquipe = new DateTime(2010, 9, 30), DateFinAvecEquipe = null },
-                new EquipeJoueurBd { EquipeId = 3, JoueurId = 9, NoDossard = 31, DateDebutAvecEquipe = new DateTime(2018, 4, 20), DateFinAvecEquipe = null },
-                new EquipeJoueurBd { EquipeId = 3, JoueurId = 10, NoDossard = 32, DateDebutAvecEquipe = new DateTime(2018, 2, 13), DateFinAvecEquipe = null },
-                new EquipeJoueurBd { EquipeId = 3, JoueurId = 11, NoDossard = 33, DateDebutAvecEquipe = new DateTime(2018, 10, 30), DateFinAvecEquipe = null },
-                new EquipeJoueurBd { EquipeId = 4, JoueurId = 12, NoDossard = 34, DateDebutAvecEquipe = new DateTime(2011, 9, 10), DateFinAvecEquipe = null },
-                new EquipeJoueurBd { EquipeId = 4, JoueurId = 13, NoDossard = 35, DateDebutAvecEquipe = new DateTime(2012, 8, 20), DateFinAvecEquipe = null }
+                new EquipeJoueurBd { Id = 1, EquipeId = 1, JoueurId = 1, NoDossard = 23, DateDebutAvecEquipe = new DateTime(2008, 9, 30), DateFinAvecEquipe = null },
+                new EquipeJoueurBd { Id = 2, EquipeId = 1, JoueurId = 2, NoDossard = 24, DateDebutAvecEquipe = new DateTime(2016, 9, 30), DateFinAvecEquipe = null },
+                new EquipeJoueurBd { Id = 3, EquipeId = 1, JoueurId = 3, NoDossard = 25, DateDebutAvecEquipe = new DateTime(2017, 9, 30), DateFinAvecEquipe = null },
+                new EquipeJoueurBd { Id = 4, EquipeId = 1, JoueurId = 4, NoDossard = 26, DateDebutAvecEquipe = new DateTime(2013, 9, 30), DateFinAvecEquipe = null },
+                new EquipeJoueurBd { Id = 5, EquipeId = 2, JoueurId = 5, NoDossard = 27, DateDebutAvecEquipe = new DateTime(2014, 9, 30), DateFinAvecEquipe = null },
+                new EquipeJoueurBd { Id = 6, EquipeId = 2, JoueurId = 6, NoDossard = 28, DateDebutAvecEquipe = new DateTime(2020, 11, 30), DateFinAvecEquipe = null },
+                new EquipeJoueurBd { Id = 7, EquipeId = 2, JoueurId = 7, NoDossard = 29, DateDebutAvecEquipe = new DateTime(2018, 1, 15), DateFinAvecEquipe = null },
+                new EquipeJoueurBd { Id = 8, EquipeId = 2, JoueurId = 8, NoDossard = 30, DateDebutAvecEquipe = new DateTime(2010, 9, 30), DateFinAvecEquipe = null },
+                new EquipeJoueurBd { Id = 9, EquipeId = 3, JoueurId = 9, NoDossard = 31, DateDebutAvecEquipe = new DateTime(2018, 4, 20), DateFinAvecEquipe = null },
+                new EquipeJoueurBd { Id = 10, EquipeId = 3, JoueurId = 10, NoDossard = 32, DateDebutAvecEquipe = new DateTime(2018, 2, 13), DateFinAvecEquipe = null },
+                new EquipeJoueurBd { Id = 11, EquipeId = 3, JoueurId = 11, NoDossard = 33, DateDebutAvecEquipe = new DateTime(2018, 10, 30), DateFinAvecEquipe = null },
+                new EquipeJoueurBd { Id = 12, EquipeId = 4, JoueurId = 12, NoDossard = 34, DateDebutAvecEquipe = new DateTime(2011, 9, 10), DateFinAvecEquipe = null },
+                new EquipeJoueurBd { Id = 13, EquipeId = 4, JoueurId = 13, NoDossard = 35, DateDebutAvecEquipe = new DateTime(2012, 8, 20), DateFinAvecEquipe = null }
                 );
 
             modelBuilder.Entity<StatsJoueurBd>()
@@ -183,11 +170,6 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<StatsEquipeBd>()
                 .HasData(
                     new StatsEquipeBd { AnneeStats = 2023, EquipeId = 1, NbPartiesJouees = 82, NbVictoires = 60, NbDefaites = 10, NbDefProlo = 12, NbButsPour = 499, NbButsContre = 199 }
-                );
-            
-            modelBuilder.Entity<AlignementBd>()
-                .HasData(
-                    new AlignementBd { Id = 1, EquipeId = 1, JoueurId = 1, DateDebut = new DateTime(2016, 9, 3), DateFin = null}
                 );
 
             modelBuilder.Entity<ParametresBd>()

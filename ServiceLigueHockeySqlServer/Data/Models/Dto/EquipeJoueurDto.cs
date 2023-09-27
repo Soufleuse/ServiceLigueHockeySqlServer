@@ -5,6 +5,8 @@ namespace ServiceLigueHockeySqlServer.Data.Models.Dto
 {
     public class EquipeJoueurDto
     {
+        public int Id { get; set; }
+        
         public int JoueurId { get; set; }
 
         public int EquipeId { get; set; }

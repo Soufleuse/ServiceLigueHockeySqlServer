@@ -22,7 +22,5 @@ namespace ServiceLigueHockeySqlServer.Data.Models
         public virtual ICollection<EquipeJoueurBd> listeEquipeJoueur { get; set; } = default!;
 
         public virtual ICollection<StatsJoueurBd> listeStatsJoueur { get; set; } = default!;
-        
-        public virtual ICollection<AlignementBd> listeAlignement { get; set; } = default!;
     }
 }
