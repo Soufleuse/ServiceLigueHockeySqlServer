@@ -83,68 +83,39 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             }
 
             return Ok(lecture.AsEnumerable());
-
-            /*var listeEquipeHoueur = new List<EquipeJoueurDto>();
-            foreach (var item in lecture)
-            {
-                var unJoueur = _context.joueur.Find(item.JoueurId);
-                if (unJoueur == null) unJoueur = new JoueurBd();
-
-                listeEquipeHoueur.Add(new EquipeJoueurDto
-                {
-                    Id = item.Id,
-                    EquipeId = item.EquipeId,
-                    JoueurId = item.JoueurId,
-                    NoDossard = item.NoDossard,
-                    DateDebutAvecEquipe = item.DateDebutAvecEquipe,
-                    DateFinAvecEquipe = item.DateFinAvecEquipe,
-                    PrenomNomJoueur = unJoueur.Prenom + " " + unJoueur.Nom
-                });
-            }
-
-            return Ok(listeEquipeHoueur);*/
         }
 
         // GET: api/equipeJoueur/5
         [HttpGet("{id}/")]
         public ActionResult<EquipeJoueurDto> GetEquipeJoueur(int Id)
         {
-            var lecture = from item in _context.equipeJoueur
-                             where item.Id == Id
-                             select new EquipeJoueurDto
-                             {
-                                Id = item.Id,
-                                EquipeId = item.EquipeId,
-                                JoueurId = item.JoueurId,
-                                NoDossard = item.NoDossard,
-                                DateDebutAvecEquipe = item.DateDebutAvecEquipe,
-                                DateFinAvecEquipe = item.DateFinAvecEquipe
-                             };
+            var lecture = (from item in _context.equipeJoueur
+                           where item.Id == Id
+                           select new EquipeJoueurDto
+                           {
+                              Id = item.Id,
+                              EquipeId = item.EquipeId,
+                              JoueurId = item.JoueurId,
+                              NoDossard = item.NoDossard,
+                              DateDebutAvecEquipe = item.DateDebutAvecEquipe,
+                              DateFinAvecEquipe = item.DateFinAvecEquipe
+                           }).FirstOrDefault();
 
             if (lecture == null)
             {
                 return NotFound();
             }
 
-            var listeEquipeHoueur = new List<EquipeJoueurDto>();
-            foreach (var item in lecture)
-            {
-                var unJoueur = _context.joueur.Find(item.JoueurId);
-                if (unJoueur == null) unJoueur = new JoueurBd();
+            var retour = new EquipeJoueurDto {
+                Id = lecture.Id,
+                EquipeId = lecture.EquipeId,
+                JoueurId = lecture.JoueurId,
+                NoDossard = lecture.NoDossard,
+                DateDebutAvecEquipe = lecture.DateDebutAvecEquipe,
+                DateFinAvecEquipe = lecture.DateFinAvecEquipe
+            };
 
-                listeEquipeHoueur.Add(new EquipeJoueurDto
-                {
-                    Id = item.Id,
-                    EquipeId = item.EquipeId,
-                    JoueurId = item.JoueurId,
-                    NoDossard = item.NoDossard,
-                    DateDebutAvecEquipe = item.DateDebutAvecEquipe,
-                    DateFinAvecEquipe = item.DateFinAvecEquipe,
-                    PrenomNomJoueur = unJoueur.Prenom + " " + unJoueur.Nom
-                });
-            }
-
-            return Ok(listeEquipeHoueur);
+            return Ok(retour);
         }
 
         // PUT: api/equipeJoueur/5
