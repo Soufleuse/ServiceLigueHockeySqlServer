@@ -38,7 +38,6 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             var retour = new List<EquipeJoueurDto>();
             foreach (var item in listeEquipeJoueur)
             {
-
                 retour.Add(new EquipeJoueurDto
                 {
                     Id = item.Id,
@@ -66,7 +65,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         public ActionResult<EquipeJoueurDto> GetEquipeJoueurParEquipe(int equipeId)
         {
             var lecture = from item in _context.equipeJoueur
-                             where item.EquipeId == equipeId
+                             where item.EquipeId == equipeId &&
+                                   (!item.DateFinAvecEquipe.HasValue || item.DateFinAvecEquipe.Value > DateTime.Now)
                              select new EquipeJoueurDto
                              {
                                 Id = item.Id,
@@ -162,7 +162,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         // POST: api/equipeJoueur
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<EquipeJoueurDto>> PostEquipeJoueurBd(EquipeJoueurDto equipeJoueurDto)
+        public async Task<ActionResult<EquipeJoueurDto>> PostEquipeJoueur(EquipeJoueurDto equipeJoueurDto)
         {
             var equipeJoueurBd = new EquipeJoueurBd
             {
@@ -191,7 +191,9 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 }
             }
 
-            return CreatedAtAction(nameof(equipeJoueurDto), new { id = equipeJoueurBd.Id }, equipeJoueurDto);
+            equipeJoueurDto.Id = equipeJoueurBd.Id;
+
+            return CreatedAtAction("PostEquipeJoueur", equipeJoueurDto);
         }
 
         // DELETE: api/equipeJoueur/5
