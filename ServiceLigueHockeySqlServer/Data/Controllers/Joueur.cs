@@ -64,6 +64,22 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return Ok(joueurDto);
         }
 
+        // GET: api/Joueur/obtenirprenomnom/5
+        [HttpGet("obtenirprenomnom/{id}")]
+        public async Task<ActionResult<string>> GetPrenomNomJoueur(int id)
+        {
+            var joueurBd = await _context.joueur.FindAsync(id);
+
+            if (joueurBd == null)
+            {
+                return NotFound();
+            }
+
+            var prenomNom = joueurBd.Prenom + " " + joueurBd.Nom;
+
+            return Ok(prenomNom);
+        }
+
         // PUT: api/Joueur/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

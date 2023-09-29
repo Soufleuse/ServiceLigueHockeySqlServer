@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ServiceLigueHockeySqlServer.Data.Models;
@@ -23,13 +20,14 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             _context = context;
         }
 
-        // GET: api/equipeJoueurBds
+        // GET: api/equipeJoueur
         [HttpGet]
         public ActionResult<IList<EquipeJoueurDto>> GetEquipeJoueur()
         {
             var listeEquipeJoueur = from item in _context.equipeJoueur
                                     select new EquipeJoueurDto
                                     {
+                                        Id = item.Id,
                                         EquipeId = item.EquipeId,
                                         JoueurId = item.JoueurId,
                                         NoDossard = item.NoDossard,
@@ -40,9 +38,9 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             var retour = new List<EquipeJoueurDto>();
             foreach (var item in listeEquipeJoueur)
             {
-
                 retour.Add(new EquipeJoueurDto
                 {
+                    Id = item.Id,
                     EquipeId = item.EquipeId,
                     JoueurId = item.JoueurId,
                     NoDossard = item.NoDossard,
@@ -62,20 +60,21 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return Ok(retour);
         }
 
-        // GET: api/equipeJoueurBds/5/6
-        [HttpGet("{EquipeId}/{JoueurId}")]
-        public ActionResult<EquipeJoueurDto> GetEquipeJoueurBd(int equipeId, int joueurId)
+        // GET: api/equipeJoueur/parequipe/5
+        [HttpGet("parequipe/{equipeId}/")]
+        public ActionResult<EquipeJoueurDto> GetEquipeJoueurParEquipe(int equipeId)
         {
             var lecture = from item in _context.equipeJoueur
-                             where item.EquipeId == equipeId
-                             where item.JoueurId == joueurId
+                             where item.EquipeId == equipeId &&
+                                   (!item.DateFinAvecEquipe.HasValue || item.DateFinAvecEquipe.Value > DateTime.Now)
                              select new EquipeJoueurDto
                              {
-                                 EquipeId = item.EquipeId,
-                                 JoueurId = item.JoueurId,
-                                 NoDossard = item.NoDossard,
-                                 DateDebutAvecEquipe = item.DateDebutAvecEquipe,
-                                 DateFinAvecEquipe = item.DateFinAvecEquipe
+                                Id = item.Id,
+                                EquipeId = item.EquipeId,
+                                JoueurId = item.JoueurId,
+                                NoDossard = item.NoDossard,
+                                DateDebutAvecEquipe = item.DateDebutAvecEquipe,
+                                DateFinAvecEquipe = item.DateFinAvecEquipe
                              };
 
             if (lecture == null)
@@ -83,38 +82,55 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 return NotFound();
             }
 
-            var listeAlignement = new List<EquipeJoueurDto>();
-            foreach (var item in lecture)
-            {
-                var unJoueur = _context.joueur.Find(item.JoueurId);
-                if (unJoueur == null) unJoueur = new JoueurBd();
-
-                listeAlignement.Add(new EquipeJoueurDto
-                {
-                    EquipeId = item.EquipeId,
-                    JoueurId = item.JoueurId,
-                    NoDossard = item.NoDossard,
-                    DateDebutAvecEquipe = item.DateDebutAvecEquipe,
-                    DateFinAvecEquipe = item.DateFinAvecEquipe,
-                    PrenomNomJoueur = unJoueur.Prenom + " " + unJoueur.Nom
-                });
-            }
-
-            return Ok(listeAlignement);
+            return Ok(lecture.AsEnumerable());
         }
 
-        // PUT: api/equipeJoueurBds/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{EquipeId}/{JoueurId}")]
-        public async Task<IActionResult> PutEquipeJoueurBd(int equipeId, int joueurId, EquipeJoueurDto equipeJoueurDto)
+        // GET: api/equipeJoueur/5
+        [HttpGet("{id}/")]
+        public ActionResult<EquipeJoueurDto> GetEquipeJoueur(int Id)
         {
-            if (equipeId != equipeJoueurDto.EquipeId || joueurId != equipeJoueurDto.JoueurId)
+            var lecture = (from item in _context.equipeJoueur
+                           where item.Id == Id
+                           select new EquipeJoueurDto
+                           {
+                              Id = item.Id,
+                              EquipeId = item.EquipeId,
+                              JoueurId = item.JoueurId,
+                              NoDossard = item.NoDossard,
+                              DateDebutAvecEquipe = item.DateDebutAvecEquipe,
+                              DateFinAvecEquipe = item.DateFinAvecEquipe
+                           }).FirstOrDefault();
+
+            if (lecture == null)
+            {
+                return NotFound();
+            }
+
+            var retour = new EquipeJoueurDto {
+                Id = lecture.Id,
+                EquipeId = lecture.EquipeId,
+                JoueurId = lecture.JoueurId,
+                NoDossard = lecture.NoDossard,
+                DateDebutAvecEquipe = lecture.DateDebutAvecEquipe,
+                DateFinAvecEquipe = lecture.DateFinAvecEquipe
+            };
+
+            return Ok(retour);
+        }
+
+        // PUT: api/equipeJoueur/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutEquipeJoueurBd(int Id, EquipeJoueurDto equipeJoueurDto)
+        {
+            if (Id != equipeJoueurDto.Id)
             {
                 return BadRequest();
             }
 
             var equipeJoueurBd = new EquipeJoueurBd
             {
+                Id = equipeJoueurDto.Id,
                 EquipeId = equipeJoueurDto.EquipeId,
                 JoueurId = equipeJoueurDto.JoueurId,
                 NoDossard = equipeJoueurDto.NoDossard,
@@ -130,7 +146,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EquipeJoueurBdExists(equipeId, joueurId))
+                if (!EquipeJoueurBdExists(Id))
                 {
                     return NotFound();
                 }
@@ -143,13 +159,14 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return NoContent();
         }
 
-        // POST: api/equipeJoueurBds
+        // POST: api/equipeJoueur
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<EquipeJoueurDto>> PostEquipeJoueurBd(EquipeJoueurDto equipeJoueurDto)
+        public async Task<ActionResult<EquipeJoueurDto>> PostEquipeJoueur(EquipeJoueurDto equipeJoueurDto)
         {
             var equipeJoueurBd = new EquipeJoueurBd
             {
+                Id = equipeJoueurDto.Id,
                 EquipeId = equipeJoueurDto.EquipeId,
                 JoueurId = equipeJoueurDto.JoueurId,
                 NoDossard = equipeJoueurDto.NoDossard,
@@ -164,7 +181,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             }
             catch (DbUpdateException)
             {
-                if (EquipeJoueurBdExists(equipeJoueurBd.EquipeId, equipeJoueurBd.JoueurId))
+                if (EquipeJoueurBdExists(equipeJoueurBd.Id))
                 {
                     return Conflict();
                 }
@@ -174,14 +191,16 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 }
             }
 
-            return CreatedAtAction(nameof(equipeJoueurDto), new { id = equipeJoueurBd.Equipe }, equipeJoueurDto);
+            equipeJoueurDto.Id = equipeJoueurBd.Id;
+
+            return CreatedAtAction("PostEquipeJoueur", equipeJoueurDto);
         }
 
-        // DELETE: api/equipeJoueurBds/5/6
-        [HttpDelete("{EquipeId}/{JoueurId}")]
-        public async Task<IActionResult> DeleteEquipeJoueurBd(int equipeId, int joueurId)
+        // DELETE: api/equipeJoueur/5
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteEquipeJoueurBd(int Id)
         {
-            var equipeJoueurBd = await _context.equipeJoueur.FindAsync(equipeId, joueurId);
+            var equipeJoueurBd = await _context.equipeJoueur.FindAsync(Id);
             if (equipeJoueurBd == null)
             {
                 return NotFound();
@@ -193,9 +212,9 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return NoContent();
         }
 
-        private bool EquipeJoueurBdExists(int equipeId, int joueurId)
+        private bool EquipeJoueurBdExists(int Id)
         {
-            return _context.equipeJoueur.Any(e => e.EquipeId == equipeId && e.JoueurId == joueurId);
+            return _context.equipeJoueur.Any(e => e.Id == Id);
         }
     }
 }

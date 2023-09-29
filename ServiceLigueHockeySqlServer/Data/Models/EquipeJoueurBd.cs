@@ -7,6 +7,8 @@ namespace ServiceLigueHockeySqlServer.Data.Models
     [Table("EquipeJoueur")]
     public class EquipeJoueurBd
     {
+        public int Id { get; set; }
+        
         //[ForeignKey("Joueur")]
         public int JoueurId { get; set; }
         public virtual JoueurBd Joueur { get; set; } = default!;
