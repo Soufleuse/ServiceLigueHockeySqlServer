@@ -23,7 +23,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
         // GET: api/StatsEquipe/parannee/{annee})
         [HttpGet("parannee/{annee}")]
-        public ActionResult<IQueryable<StatsEquipeDto>> GetStatsEquipeDto(short annee)
+        public ActionResult<IQueryable<StatsEquipeDto>> GetStatsEquipe(short annee)
         {
             var listeStatsEquipe = _context.statsEquipe
                                    .Where(statEquipe => statEquipe.AnneeStats == annee)
@@ -85,7 +85,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         }
 
         [HttpPut("{equipeId}/{annee}")]
-        public async Task<IActionResult> PutStatsEquipeBd(int equipeId, short annee, StatsEquipeDto statsEquipeDto)
+        public async Task<IActionResult> PutStatsEquipe(int equipeId, short annee, StatsEquipeDto statsEquipeDto)
         {
             if (equipeId != statsEquipeDto.equipeId && annee != statsEquipeDto.anneeStats)
             {
@@ -125,7 +125,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<StatsEquipeDto>> PostStatsEquipeBd(StatsEquipeDto statsEquipeDto)
+        public async Task<ActionResult<StatsEquipeDto>> PostStatsEquipe(StatsEquipeDto statsEquipeDto)
         {
             var statsEquipeBd = new StatsEquipeBd {
                 AnneeStats = statsEquipeDto.anneeStats,
