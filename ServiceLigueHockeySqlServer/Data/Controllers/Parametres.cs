@@ -23,7 +23,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             _context = context;
         }
 
-        // GET: api/ParametresBds
+        // GET: api/Parametres
         [HttpGet]
         public ActionResult<IQueryable<ParametresDto>> GetParametresBd()
         {
@@ -39,7 +39,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return Ok(listeParametres);
         }
 
-        // GET: api/ParametresBds/5
+        // GET: api/Parametres/5
         [HttpGet("{nom}")]
         public ActionResult<IQueryable<JoueurDto>> GetParametresBd(string nom)
         {
@@ -56,29 +56,33 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return Ok(listeParametres);
         }
 
-        // GET: api/ParametresBds/5/2000-01-01/2009-01-01
-        /*[HttpGet("{nom}/{datevalidite}")]
-        public async Task<ActionResult<ParametresDto>> GetParametresBd(string nom, DateTime datevalidite)
+        // GET: api/Parametres/5/2000-01-01
+        [HttpGet("{nom}/{datevalidite}")]
+        public async Task<ActionResult<List<ParametresDto>>> GetParametresBd(string nom, DateTime datevalidite)
         {
-            var parametresBd = await _context.parametres.FindAsync(nom, datevalidite);
+            var parametresBd = await _context.parametres.Where(x => string.Compare(x.nom, nom) == 0).ToListAsync();
 
             if (parametresBd == null)
             {
                 return NotFound();
             }
 
-            var joueurDto = new ParametresDto
-            {
-                nom = parametresBd.nom,
-                valeur = parametresBd.valeur,
-                dateDebut = parametresBd.dateDebut,
-                dateFin = parametresBd.dateFin
-            };
+            List<ParametresDto> retour = new List<ParametresDto>();
+            parametresBd.ForEach(x => {
+                var ajout = new ParametresDto
+                {
+                    nom = x.nom,
+                    valeur = x.valeur,
+                    dateDebut = x.dateDebut,
+                    dateFin = x.dateFin
+                };
+                retour.Add(ajout);
+            });
 
-            return Ok(joueurDto);
-        }*/
+            return Ok(retour);
+        }
 
-        // PUT: api/ParametresBds/5
+        // PUT: api/Parametres/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{nom}/{datedebut}/{datefin}")]
         public async Task<IActionResult> PutJoueurBd(string nom, DateTime datedebut, DateTime datefin, ParametresBd parametreBd)
@@ -109,7 +113,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             return NoContent();
         }
 
-        // POST: api/ParametresBds
+        // POST: api/Parametres
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<ParametresDto>> PostParametreDto(ParametresDto parametre)
