@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ServiceLigueHockeySqlServer.Data;
-using ServiceLigueHockeySqlServer.Data.Controllers;
 using ServiceLigueHockeySqlServer.Data.Models;
 using ServiceLigueHockeySqlServer.Data.Models.Dto;
 
@@ -166,7 +164,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 }
             }
 
-            return CreatedAtAction("PostStatsEquipeBd", statsEquipeDto);
+            return CreatedAtAction("PostStatsEquipe", statsEquipeDto);
         }
 
         /*[HttpDelete("{id}/{annee}")]
