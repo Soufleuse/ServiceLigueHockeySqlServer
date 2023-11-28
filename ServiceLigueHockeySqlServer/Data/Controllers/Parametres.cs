@@ -84,10 +84,10 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
         // PUT: api/Parametres/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{nom}/{datedebut}/{datefin}")]
-        public async Task<IActionResult> PutJoueurBd(string nom, DateTime datedebut, DateTime datefin, ParametresBd parametreBd)
+        [HttpPut("{nom}/{datedebut}")]
+        public async Task<IActionResult> PutJoueurBd(string nom, DateTime datedebut, ParametresBd parametreBd)
         {
-            if (string.Compare(nom, parametreBd.nom) !=0 || datedebut != parametreBd.dateDebut || datefin != parametreBd.dateFin)
+            if (string.Compare(nom, parametreBd.nom) != 0 || datedebut != parametreBd.dateDebut)
             {
                 return BadRequest();
             }
