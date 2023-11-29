@@ -60,7 +60,10 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("{nom}/{datevalidite}")]
         public async Task<ActionResult<List<ParametresDto>>> GetParametresBd(string nom, DateTime datevalidite)
         {
-            var parametresBd = await _context.parametres.Where(x => string.Compare(x.nom, nom) == 0).ToListAsync();
+            var parametresBd = await _context.parametres
+                .Where(x => string.Compare(x.nom, nom) == 0 &&
+                       x.dateDebut <= datevalidite && (!x.dateFin.HasValue || x.dateFin.HasValue && x.dateFin >= datevalidite))
+                .ToListAsync();
 
             if (parametresBd == null)
             {
