@@ -55,7 +55,9 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<EquipeBd>().Property(x => x.Id).IsRequired();
             modelBuilder.Entity<EquipeBd>().Property(x => x.NomEquipe).HasMaxLength(50);
             modelBuilder.Entity<EquipeBd>().Property(x => x.Ville).HasMaxLength(50);
-            modelBuilder.Entity<EquipeBd>().HasMany("listeEquipeJoueur").WithOne("Equipe");
+            modelBuilder.Entity<EquipeBd>().HasMany("listeEquipeJoueur")
+                                           .WithOne("Equipe")
+                                           .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<JoueurBd>().ToTable("Joueur");
             modelBuilder.Entity<JoueurBd>().HasKey(c => c.Id);
@@ -64,7 +66,12 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<JoueurBd>().Property(c => c.Nom).HasMaxLength(50);
             modelBuilder.Entity<JoueurBd>().Property(c => c.VilleNaissance).HasMaxLength(50);
             modelBuilder.Entity<JoueurBd>().Property(c => c.PaysOrigine).HasMaxLength(50);
-            modelBuilder.Entity<JoueurBd>().HasMany("listeEquipeJoueur").WithOne("Joueur");
+            modelBuilder.Entity<JoueurBd>().HasMany("listeEquipeJoueur")
+                                           .WithOne("Joueur")
+                                           .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<JoueurBd>().HasMany("listePenalites")
+                                           .WithOne("joueurPenalise")
+                                           .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<EquipeJoueurBd>().ToTable("EquipeJoueur");
             modelBuilder.Entity<EquipeJoueurBd>()
@@ -105,6 +112,39 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<ParametresBd>().Property(c => c.valeur).IsRequired().HasMaxLength(200);
             modelBuilder.Entity<ParametresBd>().Property(c => c.dateDebut).IsRequired();
             modelBuilder.Entity<ParametresBd>().Property(c => c.dateFin);
+
+            modelBuilder.Entity<TypePenalitesBd>().ToTable("TypePenalites");
+            modelBuilder.Entity<TypePenalitesBd>().HasKey(p => p.IdTypePenalite);
+
+            modelBuilder.Entity<CalendrierBd>().ToTable("Calendrier");
+            modelBuilder.Entity<CalendrierBd>().HasKey("IdPartie");
+            modelBuilder.Entity<CalendrierBd>().HasIndex(u => new { u.IdEquipeHote, u.IdEquipeVisiteuse, u.DatePartieJouee })
+                                               .IsUnique();
+            modelBuilder.Entity<CalendrierBd>().HasOne("EquipeHote")
+                                               .WithMany("listeEquipeHote")
+                                               .HasForeignKey("IdEquipeHote")
+                                               .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<CalendrierBd>().HasOne("EquipeVisiteuse")
+                                               .WithMany("listeEquipeVisiteur")
+                                               .HasForeignKey("IdEquipeVisiteuse")
+                                               .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<CalendrierBd>().HasMany("listePointeurs")
+                                               .WithOne("MonCalendrier")
+                                               .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<CalendrierBd>().HasMany("listePenalites")
+                                               .WithOne("MonCalendrier")
+                                               .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<PointeursBd>().ToTable("FeuillePointage");
+            modelBuilder.Entity<PointeursBd>().HasKey(u => new { u.IdPartie, u.MomentDuButMarque });
+            modelBuilder.Entity<PointeursBd>().HasOne("MonCalendrier")
+                                              .WithMany("listePointeurs");
+
+            modelBuilder.Entity<PenalitesBd>().ToTable("Penalites");
+            modelBuilder.Entity<PenalitesBd>().HasKey(u => new { u.IdPartie, u.MomentDelaPenalite } );
+            modelBuilder.Entity<PenalitesBd>().HasMany(y => y.listePenalites);
+            modelBuilder.Entity<PenalitesBd>().HasOne("MonCalendrier")
+                                              .WithMany("listePenalites");
 
             // Ajout de données
             modelBuilder.Entity<EquipeBd>()
@@ -183,6 +223,11 @@ namespace ServiceLigueHockeySqlServer.Data
                     new ParametresBd { nom = "nombrePartiesJouees", valeur = "0", dateDebut = new DateTime(2004, 8, 1), dateFin = new DateTime(2005, 7, 31)},
                     new ParametresBd { nom = "nombrePartiesJouees", valeur = "82", dateDebut = new DateTime(1995, 8, 1), dateFin = new DateTime(2004, 7, 31)},
                     new ParametresBd { nom = "AjoutSteve", valeur = "ma valeur", dateDebut = new DateTime(2020, 1 ,1), dateFin = null }
+                );
+            
+            modelBuilder.Entity<CalendrierBd>()
+                .HasData(
+                    new CalendrierBd { IdPartie = 1, IdEquipeHote = 1, IdEquipeVisiteuse = 2, DatePartieJouee = new DateTime(2024, 10, 5, 20, 0, 0)}
                 );
         }
     }
