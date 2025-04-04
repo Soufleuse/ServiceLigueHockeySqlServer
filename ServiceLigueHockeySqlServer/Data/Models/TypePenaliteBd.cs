@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ServiceLigueHockeySqlServer.Data.Models
 {
     /// <summary>
-    /// Classe représentant une partie jouée entre deux équipe à une date donnée
+    /// Classe représentant une pénalité d'un joueur
     /// </summary>
     [Table("TypePenalites")]
     public class TypePenalitesBd
