@@ -24,13 +24,17 @@ namespace ServiceLigueHockeySqlServer.Data
 
         public DbSet<ParametresBd> parametres { get; set; } = default!;
 
+        public DbSet<TypePenalitesBd> typePenalitesBd { get; set; } = default!;
+
+        public DbSet<CalendrierBd> calendrierBds { get; set; } = default!;
+
+        public DbSet<PenalitesBd> penalitesBds { get; set; } = default!;
+
+        public DbSet<PointeursBd> pointeursBds { get; set; } = default!;
+
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
             base.ConfigureConventions(configurationBuilder);
-            
-            /*configurationBuilder.Properties<DateTime>()
-                .HaveConversion<DateTimeConverter>()
-                .HaveColumnType("date");*/
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -140,12 +144,15 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<PointeursBd>().HasOne("MonCalendrier")
                                               .WithMany("listePointeurs");
 
+            modelBuilder.Entity<TypePenalitesBd>().ToTable("TypePenalites");
+            modelBuilder.Entity<TypePenalitesBd>().HasKey(g => g.IdTypePenalite);
+
             modelBuilder.Entity<PenalitesBd>().ToTable("Penalites");
             modelBuilder.Entity<PenalitesBd>().HasKey(u => new { u.IdPartie, u.MomentDelaPenalite } );
             modelBuilder.Entity<PenalitesBd>().HasMany(y => y.listePenalites);
             modelBuilder.Entity<PenalitesBd>().HasOne("MonCalendrier")
                                               .WithMany("listePenalites");
-
+            
             // Ajout de données
             modelBuilder.Entity<EquipeBd>()
                 .HasData(
@@ -229,20 +236,13 @@ namespace ServiceLigueHockeySqlServer.Data
                 .HasData(
                     new CalendrierBd { IdPartie = 1, IdEquipeHote = 1, IdEquipeVisiteuse = 2, DatePartieJouee = new DateTime(2024, 10, 5, 20, 0, 0)}
                 );
+
+            modelBuilder.Entity<TypePenalitesBd>()
+                .HasData(
+                    new TypePenalitesBd { IdTypePenalite = 1, DescriptionPenalite = "Mineure", NbreMinutesPenalitesPourCetteInfraction = 2 },
+                    new TypePenalitesBd { IdTypePenalite = 2, DescriptionPenalite = "Majeure", NbreMinutesPenalitesPourCetteInfraction = 5 },
+                    new TypePenalitesBd { IdTypePenalite = 3, DescriptionPenalite = "Inconduite de partie", NbreMinutesPenalitesPourCetteInfraction = 10 }
+                );
         }
     }
-
-    /// <summary>
-    /// Convertit <see cref="DateTime" /> à <see cref="DateTime"/> et vice versa.
-    /// </summary>
-    /*public class DateTimeConverter : ValueConverter<DateTime, DateTime>
-    {
-        /// <summary>
-        /// Creates a new instance of this converter.
-        /// </summary>
-        public DateTimeConverter() : base(
-                d => d.ToDateTime(TimeOnly.MinValue),
-                d => DateTime.FromDateTime(d))
-        { }
-    }*/
 }
