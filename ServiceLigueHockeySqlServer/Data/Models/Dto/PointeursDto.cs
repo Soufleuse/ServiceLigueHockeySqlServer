@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ServiceLigueHockeySqlServer.Data.Models.Dto {
     
-    public class PointeursBd
+    public class PointeursDto
     {
         public TimeSpan MomentDuButMarque { get; set; } = TimeSpan.Zero;
         public int IdJoueurButMarque { get; set; } = default;
@@ -11,6 +11,6 @@ namespace ServiceLigueHockeySqlServer.Data.Models.Dto {
         public int? IdJoueurSecondeAssistance { get; set; } = null;
         
         public int IdPartie { get; set; }
-        public virtual CalendrierBd MonCalendrier { get; set; } = default!;
+        //public virtual CalendrierBd MonCalendrier { get; set; } = default!;
     }
 }

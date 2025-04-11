@@ -15,6 +15,9 @@ namespace ServiceLigueHockeySqlServer.Data.Models
         public int IdPartie { get; set; } = default;
         // Le timestamp complet sera utilisé pour noter la date ET l'heure de la partie.
         public DateTime DatePartieJouee { get; set; } = default;
+        // L'année/la saison dans laquelle la partie s'est jouée.
+        public short AnneeStats { get; set; }
+        public virtual AnneeStatsBd zeAnnee { get; set; } = default!;
         public short? NbreButsComptesParHote { get; set; } = null;
         public short? NbreButsComptesParVisiteur { get; set; } = null;
         public char? AFiniEnProlongation { get; set; } = null;

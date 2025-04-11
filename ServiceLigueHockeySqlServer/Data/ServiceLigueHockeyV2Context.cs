@@ -24,13 +24,17 @@ namespace ServiceLigueHockeySqlServer.Data
 
         public DbSet<ParametresBd> parametres { get; set; } = default!;
 
-        public DbSet<TypePenalitesBd> typePenalitesBd { get; set; } = default!;
+        public DbSet<TypePenalitesBd> typePenalites { get; set; } = default!;
 
-        public DbSet<CalendrierBd> calendrierBds { get; set; } = default!;
+        public DbSet<CalendrierBd> calendriers { get; set; } = default!;
 
-        public DbSet<PenalitesBd> penalitesBds { get; set; } = default!;
+        public DbSet<PenalitesBd> penalites { get; set; } = default!;
 
-        public DbSet<PointeursBd> pointeursBds { get; set; } = default!;
+        public DbSet<PointeursBd> pointeurs { get; set; } = default!;
+
+        public DbSet<Penalite_TypePenaliteBd> penalite_TypePenalites { get; set; } = default!;
+
+        public DbSet<AnneeStatsBd> anneeStats { get; set; } = default!;
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
@@ -54,9 +58,15 @@ namespace ServiceLigueHockeySqlServer.Data
             base.OnModelCreating(modelBuilder);
 
             // Création des tables
+            modelBuilder.Entity<AnneeStatsBd>().ToTable("AnneeStats");
+            modelBuilder.Entity<AnneeStatsBd>().HasKey(s => s.AnneeStats);
+            modelBuilder.Entity<AnneeStatsBd>().Property(e => e.AnneeStats).ValueGeneratedNever();
+            modelBuilder.Entity<AnneeStatsBd>().HasMany(d => d.listeCalendrier)
+                                               .WithOne(d => d.zeAnnee);
+
             modelBuilder.Entity<EquipeBd>().ToTable("Equipe");
             modelBuilder.Entity<EquipeBd>().HasKey(c => c.Id);
-            modelBuilder.Entity<EquipeBd>().Property(x => x.Id).IsRequired();
+            modelBuilder.Entity<EquipeBd>().Property(x => x.Id).IsRequired().ValueGeneratedNever();
             modelBuilder.Entity<EquipeBd>().Property(x => x.NomEquipe).HasMaxLength(50);
             modelBuilder.Entity<EquipeBd>().Property(x => x.Ville).HasMaxLength(50);
             modelBuilder.Entity<EquipeBd>().HasMany("listeEquipeJoueur")
@@ -65,7 +75,7 @@ namespace ServiceLigueHockeySqlServer.Data
 
             modelBuilder.Entity<JoueurBd>().ToTable("Joueur");
             modelBuilder.Entity<JoueurBd>().HasKey(c => c.Id);
-            modelBuilder.Entity<JoueurBd>().Property(c => c.Id).IsRequired();
+            modelBuilder.Entity<JoueurBd>().Property(c => c.Id).IsRequired().ValueGeneratedNever();
             modelBuilder.Entity<JoueurBd>().Property(c => c.Prenom).HasMaxLength(50);
             modelBuilder.Entity<JoueurBd>().Property(c => c.Nom).HasMaxLength(50);
             modelBuilder.Entity<JoueurBd>().Property(c => c.VilleNaissance).HasMaxLength(50);
@@ -122,6 +132,11 @@ namespace ServiceLigueHockeySqlServer.Data
 
             modelBuilder.Entity<CalendrierBd>().ToTable("Calendrier");
             modelBuilder.Entity<CalendrierBd>().HasKey("IdPartie");
+            modelBuilder.Entity<CalendrierBd>().Property(e => e.IdPartie).ValueGeneratedNever();
+            modelBuilder.Entity<CalendrierBd>().HasOne("zeAnnee")
+                                               .WithMany("listeCalendrier")
+                                               .HasForeignKey("AnneeStats")
+                                               .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<CalendrierBd>().HasIndex(u => new { u.IdEquipeHote, u.IdEquipeVisiteuse, u.DatePartieJouee })
                                                .IsUnique();
             modelBuilder.Entity<CalendrierBd>().HasOne("EquipeHote")
@@ -142,16 +157,31 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<PointeursBd>().ToTable("FeuillePointage");
             modelBuilder.Entity<PointeursBd>().HasKey(u => new { u.IdPartie, u.MomentDuButMarque });
             modelBuilder.Entity<PointeursBd>().HasOne("MonCalendrier")
-                                              .WithMany("listePointeurs");
+                                              .WithMany("listePointeurs")
+                                              .HasForeignKey("IdPartie");
 
             modelBuilder.Entity<TypePenalitesBd>().ToTable("TypePenalites");
             modelBuilder.Entity<TypePenalitesBd>().HasKey(g => g.IdTypePenalite);
+            modelBuilder.Entity<TypePenalitesBd>().Property(e => e.IdTypePenalite).ValueGeneratedNever();
+
+            modelBuilder.Entity<Penalite_TypePenaliteBd>().ToTable("Penalite_TypePenalite");
+            modelBuilder.Entity<Penalite_TypePenaliteBd>().HasKey("IdPenalite");
+            modelBuilder.Entity<Penalite_TypePenaliteBd>().Property(e => e.IdPenalite).ValueGeneratedNever();
+            modelBuilder.Entity<Penalite_TypePenaliteBd>().HasOne("typePenalitesParent")
+                                                          .WithMany("listePenTypePen")
+                                                          .HasForeignKey("IdTypePenalite");
+            modelBuilder.Entity<Penalite_TypePenaliteBd>().HasOne("penaliteParent")
+                                                          .WithMany("listePenalites")
+                                                          .HasForeignKey("MomentDelaPenalite", "IdJoueurPenalise");
 
             modelBuilder.Entity<PenalitesBd>().ToTable("Penalites");
-            modelBuilder.Entity<PenalitesBd>().HasKey(u => new { u.IdPartie, u.MomentDelaPenalite } );
-            modelBuilder.Entity<PenalitesBd>().HasMany(y => y.listePenalites);
+            modelBuilder.Entity<PenalitesBd>().HasKey("MomentDelaPenalite", "IdPartie");
             modelBuilder.Entity<PenalitesBd>().HasOne("MonCalendrier")
-                                              .WithMany("listePenalites");
+                                              .WithMany("listePenalites")
+                                              .HasForeignKey("IdPartie");
+            modelBuilder.Entity<PenalitesBd>().HasOne("joueurPenalise")
+                                              .WithMany("listePenalites")
+                                              .HasForeignKey("IdJoueurPenalise");
             
             // Ajout de données
             modelBuilder.Entity<EquipeBd>()
@@ -232,9 +262,21 @@ namespace ServiceLigueHockeySqlServer.Data
                     new ParametresBd { nom = "AjoutSteve", valeur = "ma valeur", dateDebut = new DateTime(2020, 1 ,1), dateFin = null }
                 );
             
+            modelBuilder.Entity<AnneeStatsBd>()
+                .HasData(
+                    new AnneeStatsBd { AnneeStats = 2024, DescnCourte = "2024/2025", DescnLongue = "Représente la saison 2024/2025" },
+                    new AnneeStatsBd { AnneeStats = 2023, DescnCourte = "2023/2024", DescnLongue = "Représente la saison 2023/2024" },
+                    new AnneeStatsBd { AnneeStats = 2022, DescnCourte = "2022/2023", DescnLongue = "Représente la saison 2022/2023" },
+                    new AnneeStatsBd { AnneeStats = 2021, DescnCourte = "2021/2022", DescnLongue = "Représente la saison 2021/2022" },
+                    new AnneeStatsBd { AnneeStats = 2020, DescnCourte = "2020/2021", DescnLongue = "Représente la saison 2020/2021" },
+                    new AnneeStatsBd { AnneeStats = 2019, DescnCourte = "2019/2020", DescnLongue = "Représente la saison 2019/2020" },
+                    new AnneeStatsBd { AnneeStats = 2018, DescnCourte = "2018/2019", DescnLongue = "Représente la saison 2018/2019" },
+                    new AnneeStatsBd { AnneeStats = 2017, DescnCourte = "2017/2018", DescnLongue = "Représente la saison 2017/2018" }
+                );
+
             modelBuilder.Entity<CalendrierBd>()
                 .HasData(
-                    new CalendrierBd { IdPartie = 1, IdEquipeHote = 1, IdEquipeVisiteuse = 2, DatePartieJouee = new DateTime(2024, 10, 5, 20, 0, 0)}
+                    new CalendrierBd { IdPartie = 1, IdEquipeHote = 1, IdEquipeVisiteuse = 2, AnneeStats = 2024, DatePartieJouee = new DateTime(2024, 10, 5, 20, 0, 0)}
                 );
 
             modelBuilder.Entity<TypePenalitesBd>()

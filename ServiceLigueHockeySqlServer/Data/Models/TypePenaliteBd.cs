@@ -15,5 +15,7 @@ namespace ServiceLigueHockeySqlServer.Data.Models
 
         [MaxLength(100)]
         public string DescriptionPenalite { get; set; } = string.Empty;     // Mineur/Majeur/Inconduite de match
+
+        public virtual ICollection<Penalite_TypePenaliteBd> listePenTypePen { get; set; } = default!;
     }
 }

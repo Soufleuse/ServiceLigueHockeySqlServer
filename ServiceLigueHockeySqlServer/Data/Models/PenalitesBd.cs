@@ -15,7 +15,7 @@ namespace ServiceLigueHockeySqlServer.Data.Models
         public virtual JoueurBd joueurPenalise { get; set; } = default!;
 
         // Oui oui, un joueur peut avoir plus qu'une pénalité au même moment.
-        public ICollection<TypePenalitesBd> listePenalites = default!;
+        public virtual ICollection<Penalite_TypePenaliteBd> listePenalites { get; set; } = default!;
         
         public int IdPartie { get; set; }
         public virtual CalendrierBd MonCalendrier { get; set; } = default!;
