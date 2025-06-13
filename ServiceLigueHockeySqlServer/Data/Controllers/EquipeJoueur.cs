@@ -74,7 +74,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                 JoueurId = item.JoueurId,
                                 NoDossard = item.NoDossard,
                                 DateDebutAvecEquipe = item.DateDebutAvecEquipe,
-                                DateFinAvecEquipe = item.DateFinAvecEquipe
+                                DateFinAvecEquipe = item.DateFinAvecEquipe,
+                                PrenomNomJoueur = string.Format("{0} {1}", item.Joueur.Prenom, item.Joueur.Nom)
                              };
 
             if (lecture == null)
