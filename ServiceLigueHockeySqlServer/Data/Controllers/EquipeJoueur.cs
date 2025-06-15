@@ -62,21 +62,22 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
         // GET: api/equipeJoueur/parequipe/5
         [HttpGet("parequipe/{equipeId}/")]
+        // Pas IEnumerable/IList?
         public ActionResult<EquipeJoueurDto> GetEquipeJoueurParEquipe(int equipeId)
         {
             var lecture = from item in _context.equipeJoueur
-                             where item.EquipeId == equipeId &&
-                                   (!item.DateFinAvecEquipe.HasValue || item.DateFinAvecEquipe.Value > DateTime.Now)
-                             select new EquipeJoueurDto
-                             {
-                                Id = item.Id,
-                                EquipeId = item.EquipeId,
-                                JoueurId = item.JoueurId,
-                                NoDossard = item.NoDossard,
-                                DateDebutAvecEquipe = item.DateDebutAvecEquipe,
-                                DateFinAvecEquipe = item.DateFinAvecEquipe,
-                                PrenomNomJoueur = string.Format("{0} {1}", item.Joueur.Prenom, item.Joueur.Nom)
-                             };
+                          where item.EquipeId == equipeId &&
+                                (!item.DateFinAvecEquipe.HasValue || item.DateFinAvecEquipe.Value > DateTime.Now)
+                          select new EquipeJoueurDto
+                          {
+                              Id = item.Id,
+                              EquipeId = item.EquipeId,
+                              JoueurId = item.JoueurId,
+                              NoDossard = item.NoDossard,
+                              DateDebutAvecEquipe = item.DateDebutAvecEquipe,
+                              DateFinAvecEquipe = item.DateFinAvecEquipe,
+                              PrenomNomJoueur = string.Format("{0} {1}", item.Joueur.Prenom, item.Joueur.Nom)
+                          };
 
             if (lecture == null)
             {
