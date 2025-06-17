@@ -68,6 +68,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
+    app.UseCors(monAllowSpecificOrigin);
     app.UseHttpsRedirection();
 }
 
