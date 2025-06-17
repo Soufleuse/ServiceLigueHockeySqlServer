@@ -65,11 +65,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseCors(monAllowSpecificOrigin);
 }
 else
 {
-    app.UseCors(monAllowSpecificOrigin);
     app.UseHttpsRedirection();
 }
 
@@ -78,10 +76,10 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
+app.UseCors(monAllowSpecificOrigin);
+
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
