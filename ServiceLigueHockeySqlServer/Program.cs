@@ -44,9 +44,9 @@ builder.Services.AddCors(options => {
             Func<string, bool> isMonOrigineAllowed = str => { return true; };
             builder.AllowAnyHeader()
                    .AllowAnyMethod()
-                   .WithOrigins("http://localhost:12080", "https://localhost:12080", "http://127.0.0.1:12080", "https://127.0.0.1:12080")
-                   .AllowCredentials();
+                   .WithOrigins("http://localhost:12080", "https://localhost:12080", "http://127.0.0.1:12080", "https://127.0.0.1:12080");
             //.SetIsOriginAllowed(isMonOrigineAllowed)
+            //.AllowCredentials()
             //builder.WithOrigins("http://localhost:4900", "https://localhost:4900", "https://localhost:7166", "https://127.0.0.1:4900");
             //builder.WithHeaders("Content-Type");
             //builder.WithMethods("*");
