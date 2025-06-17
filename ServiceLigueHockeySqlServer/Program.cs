@@ -42,10 +42,11 @@ builder.Services.AddCors(options => {
     options.AddPolicy(name: monAllowSpecificOrigin,
         builder => {
             Func<string, bool> isMonOrigineAllowed = str => { return true; };
-            builder.SetIsOriginAllowed(isMonOrigineAllowed)
-                   .AllowAnyHeader()
+            builder.AllowAnyHeader()
                    .AllowAnyMethod()
+                   .WithOrigins("http://localhost:12080", "https://localhost:12080", "http://127.0.0.1:12080", "https://127.0.0.1:12080")
                    .AllowCredentials();
+            //.SetIsOriginAllowed(isMonOrigineAllowed)
             //builder.WithOrigins("http://localhost:4900", "https://localhost:4900", "https://localhost:7166", "https://127.0.0.1:4900");
             //builder.WithHeaders("Content-Type");
             //builder.WithMethods("*");
