@@ -20,6 +20,24 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             _context = context;
         }
 
+        // GET: api/Equipe/prochainid
+        [HttpGet("prochainid")]
+        public ActionResult<int> GetProchainIdEquipe()
+        {
+            var listeEquipe = (from equipe in _context.equipe
+                               select equipe)
+                               .OrderByDescending(x => x.Id)
+                               .FirstOrDefault();
+            
+            int retour = 1;
+            if(listeEquipe != null)
+            {
+                retour = listeEquipe.Id + 1;
+            }
+
+            return Ok(retour);
+        }
+
         // GET: api/Equipe
         [HttpGet]
         public ActionResult<IQueryable<EquipeDto>> GetEquipeDto()

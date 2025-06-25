@@ -42,10 +42,11 @@ builder.Services.AddCors(options => {
     options.AddPolicy(name: monAllowSpecificOrigin,
         builder => {
             Func<string, bool> isMonOrigineAllowed = str => { return true; };
-            builder.SetIsOriginAllowed(isMonOrigineAllowed)
-                   .AllowAnyHeader()
+            builder.AllowAnyHeader()
                    .AllowAnyMethod()
-                   .AllowCredentials();
+                   .WithOrigins("http://localhost:12080", "https://localhost:12080", "http://127.0.0.1:12080", "https://127.0.0.1:12080");
+            //.SetIsOriginAllowed(isMonOrigineAllowed)
+            //.AllowCredentials()
             //builder.WithOrigins("http://localhost:4900", "https://localhost:4900", "https://localhost:7166", "https://127.0.0.1:4900");
             //builder.WithHeaders("Content-Type");
             //builder.WithMethods("*");
@@ -64,7 +65,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseCors(monAllowSpecificOrigin);
 }
 else
 {
@@ -76,10 +76,10 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
+app.UseCors(monAllowSpecificOrigin);
+
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
