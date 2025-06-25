@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServiceLigueHockeySqlServer.Data;
 
@@ -11,9 +12,11 @@ using ServiceLigueHockeySqlServer.Data;
 namespace ServiceLigueHockeySqlServer.Migrations
 {
     [DbContext(typeof(ServiceLigueHockeyContext))]
-    partial class ServiceLigueHockeyContextModelSnapshot : ModelSnapshot
+    [Migration("20250625133851_AjoutContrainteUniqueNomEquipe")]
+    partial class AjoutContrainteUniqueNomEquipe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
