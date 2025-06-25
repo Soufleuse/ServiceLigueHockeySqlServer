@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ServiceLigueHockeySqlServer.Data.Models;
@@ -151,10 +152,27 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 EstDevenueEquipe = equipe.EstDevenueEquipe
             };
 
-            _context.equipe.Add(equipeBd);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.equipe.Add(equipeBd);
+                await _context.SaveChangesAsync();
 
-            equipe.Id = equipeBd.Id;
+                equipe.Id = equipeBd.Id;
+            }
+            catch (Exception ex)
+            {
+                var mesDefautsSerialisation = new JsonSerializerOptions(JsonSerializerDefaults.General);
+                mesDefautsSerialisation.WriteIndented = true;
+                Response.StatusCode = 500;
+
+                if (ex.InnerException != null)
+                {
+                    return new JsonResult(new { Message = ex.InnerException.Message, StackTrace = ex.InnerException.StackTrace },
+                                          mesDefautsSerialisation);
+                }
+                return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
+                                      mesDefautsSerialisation);
+            }
 
             return CreatedAtAction("PostEquipeDto", equipe);
         }
