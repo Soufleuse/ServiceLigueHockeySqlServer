@@ -69,6 +69,7 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<EquipeBd>().Property(x => x.Id).IsRequired().ValueGeneratedNever();
             modelBuilder.Entity<EquipeBd>().Property(x => x.NomEquipe).HasMaxLength(50);
             modelBuilder.Entity<EquipeBd>().Property(x => x.Ville).HasMaxLength(50);
+            modelBuilder.Entity<EquipeBd>().HasIndex(x => new { x.NomEquipe, x.Ville }).IsUnique();
             modelBuilder.Entity<EquipeBd>().HasMany("listeEquipeJoueur")
                                            .WithOne("Equipe")
                                            .OnDelete(DeleteBehavior.NoAction);
