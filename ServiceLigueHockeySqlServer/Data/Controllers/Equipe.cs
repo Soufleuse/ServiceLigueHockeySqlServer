@@ -122,7 +122,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!EquipeBdExists(id))
                 {
@@ -130,8 +130,33 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 }
                 else
                 {
-                    throw;
+                    var mesDefautsSerialisation = new JsonSerializerOptions(JsonSerializerDefaults.General);
+                    mesDefautsSerialisation.WriteIndented = true;
+                    Response.StatusCode = 500;
+
+                    if (ex.InnerException != null)
+                    {
+                        return new JsonResult(new { Message = ex.InnerException.Message, StackTrace = ex.InnerException.StackTrace },
+                                            mesDefautsSerialisation);
+                    }
+                    return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
+                                        mesDefautsSerialisation);
+
                 }
+            }
+            catch (Exception ex)
+            {
+                var mesDefautsSerialisation = new JsonSerializerOptions(JsonSerializerDefaults.General);
+                mesDefautsSerialisation.WriteIndented = true;
+                Response.StatusCode = 500;
+
+                if (ex.InnerException != null)
+                {
+                    return new JsonResult(new { Message = ex.InnerException.Message, StackTrace = ex.InnerException.StackTrace },
+                                          mesDefautsSerialisation);
+                }
+                return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
+                                      mesDefautsSerialisation);
             }
 
             return NoContent();
