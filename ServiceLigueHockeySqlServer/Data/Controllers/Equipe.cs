@@ -1,4 +1,6 @@
 using System;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -136,11 +138,16 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
                     if (ex.InnerException != null)
                     {
-                        return new JsonResult(new { Message = ex.InnerException.Message, StackTrace = ex.InnerException.StackTrace },
-                                            mesDefautsSerialisation);
+                        byte[] innerExMessage = Encoding.Default.GetBytes(ex.InnerException.Message);
+                        string innerExMsgUtf8 = Encoding.UTF8.GetString(innerExMessage);
+                        byte[] innerExStacktrace =
+                            Encoding.Default.GetBytes(string.IsNullOrEmpty(ex.InnerException.StackTrace) ? string.Empty : ex.InnerException.StackTrace);
+                        string innerExStacktraceUtf8 = Encoding.UTF8.GetString(innerExStacktrace);
+                        return new JsonResult(new { Message = innerExMsgUtf8, StackTrace = innerExStacktraceUtf8 },
+                                              mesDefautsSerialisation);
                     }
                     return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
-                                        mesDefautsSerialisation);
+                                          mesDefautsSerialisation);
 
                 }
             }
