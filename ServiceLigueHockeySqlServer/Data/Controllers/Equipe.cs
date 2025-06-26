@@ -130,7 +130,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 }
                 else
                 {
-                    var mesDefautsSerialisation = new JsonSerializerOptions(JsonSerializerDefaults.General);
+                    var mesDefautsSerialisation = new JsonSerializerOptions(JsonSerializerDefaults.Web);
                     mesDefautsSerialisation.WriteIndented = true;
                     Response.StatusCode = 500;
 
