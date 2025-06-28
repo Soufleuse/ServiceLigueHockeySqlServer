@@ -65,7 +65,7 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<AnneeStatsBd>().ToTable("AnneeStats");
             modelBuilder.Entity<AnneeStatsBd>().HasKey(s => s.AnneeStats);
             modelBuilder.Entity<AnneeStatsBd>().Property(e => e.AnneeStats).ValueGeneratedNever();
-            modelBuilder.Entity<AnneeStatsBd>().HasMany(d => d.listeCalendrier)
+            modelBuilder.Entity<AnneeStatsBd>().HasMany(d => d.ListeParties)
                                                .WithOne(d => d.zeAnnee);
 
             modelBuilder.Entity<ConferenceBd>().ToTable("Conference");
@@ -79,6 +79,9 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<DivisionBd>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<DivisionBd>().Property(x => x.NomDivision).HasMaxLength(25);
             modelBuilder.Entity<DivisionBd>().HasIndex(x => new { x.NomDivision, x.AnneeDebut }).IsUnique();
+            modelBuilder.Entity<DivisionBd>().HasOne(x => x.ConferenceParent)
+                                             .WithMany(y => y.listeDivision)
+                                             .HasForeignKey(z => z.ConferenceParent);
 
             modelBuilder.Entity<EquipeBd>().ToTable("Equipe");
             modelBuilder.Entity<EquipeBd>().HasKey(c => c.Id);
@@ -86,6 +89,8 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<EquipeBd>().Property(x => x.NomEquipe).HasMaxLength(50);
             modelBuilder.Entity<EquipeBd>().Property(x => x.Ville).HasMaxLength(50);
             modelBuilder.Entity<EquipeBd>().HasIndex(x => new { x.NomEquipe, x.Ville }).IsUnique();
+            modelBuilder.Entity<EquipeBd>().HasOne(x => x.division)
+                                           .WithMany(y => y.listeEquipeBd);
             modelBuilder.Entity<EquipeBd>().HasMany("listeEquipeJoueur")
                                            .WithOne("Equipe")
                                            .OnDelete(DeleteBehavior.NoAction);
@@ -151,7 +156,7 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<CalendrierBd>().HasKey("IdPartie");
             modelBuilder.Entity<CalendrierBd>().Property(e => e.IdPartie).ValueGeneratedNever();
             modelBuilder.Entity<CalendrierBd>().HasOne("zeAnnee")
-                                               .WithMany("listeCalendrier")
+                                               .WithMany("ListeParties")
                                                .HasForeignKey("AnneeStats")
                                                .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<CalendrierBd>().HasIndex(u => new { u.IdEquipeHote, u.IdEquipeVisiteuse, u.DatePartieJouee })
@@ -207,20 +212,20 @@ namespace ServiceLigueHockeySqlServer.Data
             );
 
             modelBuilder.Entity<DivisionBd>().HasData(
-                new DivisionBd { Id = 1, AppartientAConference = 1, NomDivision = "Atlantique", AnneeDebut = 1994 },
-                new DivisionBd { Id = 2, AppartientAConference = 1, NomDivision = "Métropolitaine", AnneeDebut = 1994 },
-                new DivisionBd { Id = 3, AppartientAConference = 2, NomDivision = "Centrale", AnneeDebut = 1994 },
-                new DivisionBd { Id = 4, AppartientAConference = 2, NomDivision = "Pacifique", AnneeDebut = 1994 }
+                new DivisionBd { Id = 1, ConferenceId = 1, NomDivision = "Atlantique", AnneeDebut = 1994 },
+                new DivisionBd { Id = 2, ConferenceId = 1, NomDivision = "Métropolitaine", AnneeDebut = 1994 },
+                new DivisionBd { Id = 3, ConferenceId = 2, NomDivision = "Centrale", AnneeDebut = 1994 },
+                new DivisionBd { Id = 4, ConferenceId = 2, NomDivision = "Pacifique", AnneeDebut = 1994 }
             );
 
             modelBuilder.Entity<EquipeBd>()
                 .HasData(
-                new EquipeBd { Id = 1, NomEquipe = "Canadiensssss", Ville = "Mourial", AnneeDebut = 1989 },
-                new EquipeBd { Id = 2, NomEquipe = "Bruns", Ville = "Albany", AnneeDebut = 1984 },
-                new EquipeBd { Id = 3, NomEquipe = "Harfangs", Ville = "Hartford", AnneeDebut = 1976 },
-                new EquipeBd { Id = 4, NomEquipe = "Boulettes", Ville = "Victoriaville", AnneeDebut = 1999 },
-                new EquipeBd { Id = 5, NomEquipe = "Rocher", Ville = "Percé", AnneeDebut = 2001 },
-                new EquipeBd { Id = 6, NomEquipe = "Pierre", Ville = "Rochester", AnneeDebut = 1986 }
+                new EquipeBd { Id = 1, NomEquipe = "Canadiensssss", Ville = "Mourial", AnneeDebut = 1989, DivisionId = 1 },
+                new EquipeBd { Id = 2, NomEquipe = "Bruns", Ville = "Albany", AnneeDebut = 1984, DivisionId = 1 },
+                new EquipeBd { Id = 3, NomEquipe = "Harfangs", Ville = "Hartford", AnneeDebut = 1976, DivisionId = 1 },
+                new EquipeBd { Id = 4, NomEquipe = "Boulettes", Ville = "Victoriaville", AnneeDebut = 1999, DivisionId = 1 },
+                new EquipeBd { Id = 5, NomEquipe = "Rocher", Ville = "Percé", AnneeDebut = 2001, DivisionId = 1 },
+                new EquipeBd { Id = 6, NomEquipe = "Pierre", Ville = "Rochester", AnneeDebut = 1986, DivisionId = 1 }
                 );
 
             modelBuilder.Entity<JoueurBd>()

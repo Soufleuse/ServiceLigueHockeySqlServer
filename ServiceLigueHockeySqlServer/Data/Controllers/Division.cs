@@ -49,7 +49,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                               {
                                   Id = division.Id,
                                   NomDivision = division.NomDivision,
-                                  AppartientAConference = division.AppartientAConference,
+                                  ConferenceId = division.ConferenceId,
                                   AnneeDebut = division.AnneeDebut,
                                   AnneeFin = division.AnneeFin,
                                   ConferenceParent = new ConferenceDto
@@ -79,7 +79,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 Id = divisionBd.Id,
                 NomDivision = divisionBd.NomDivision,
-                AppartientAConference = divisionBd.AppartientAConference,
+                ConferenceId = divisionBd.ConferenceId,
                 AnneeDebut = divisionBd.AnneeDebut,
                 AnneeFin = divisionBd.AnneeFin,
                 ConferenceParent = new ConferenceDto
@@ -109,7 +109,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 Id = division.Id,
                 NomDivision = division.NomDivision,
-                AppartientAConference = division.AppartientAConference,
+                ConferenceId = division.ConferenceId,
                 AnneeDebut = division.AnneeDebut,
                 AnneeFin = division.AnneeFin
             };
@@ -174,7 +174,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 Id = division.Id,
                 NomDivision = division.NomDivision,
-                AppartientAConference = division.AppartientAConference,
+                ConferenceId = division.ConferenceId,
                 AnneeDebut = division.AnneeDebut,
                 AnneeFin = division.AnneeFin
             };

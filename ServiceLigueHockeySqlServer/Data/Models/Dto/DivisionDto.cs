@@ -13,7 +13,7 @@ namespace ServiceLigueHockeySqlServer.Data.Models.Dto
 
         public int? AnneeFin { get; set; } = null;
 
-        public int AppartientAConference { get; set; } = int.MinValue;
+        public int ConferenceId { get; set; } = int.MinValue;
 
         public ConferenceDto ConferenceParent { get; set; } = default!;
     }

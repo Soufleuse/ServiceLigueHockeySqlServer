@@ -1051,7 +1051,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.CalendrierBd", b =>
                 {
                     b.HasOne("ServiceLigueHockeySqlServer.Data.Models.AnneeStatsBd", "zeAnnee")
-                        .WithMany("listeCalendrier")
+                        .WithMany("ListeParties")
                         .HasForeignKey("AnneeStats")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -1175,7 +1175,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.AnneeStatsBd", b =>
                 {
-                    b.Navigation("listeCalendrier");
+                    b.Navigation("ListeParties");
                 });
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.CalendrierBd", b =>

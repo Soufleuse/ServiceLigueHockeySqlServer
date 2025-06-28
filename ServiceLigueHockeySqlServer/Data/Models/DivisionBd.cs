@@ -18,7 +18,7 @@ namespace ServiceLigueHockeySqlServer.Data.Models
 
         public int? AnneeFin { get; set; } = null;
 
-        public int AppartientAConference { get; set; } = int.MinValue;
+        public int ConferenceId { get; set; } = int.MinValue;
 
         public ConferenceBd ConferenceParent { get; set; } = default!;
 

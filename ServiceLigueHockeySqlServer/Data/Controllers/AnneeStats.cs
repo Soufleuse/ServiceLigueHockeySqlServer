@@ -27,7 +27,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                 AnneeStats = monAnneeStats.AnneeStats,
                                 DescnCourte = monAnneeStats.DescnCourte,
                                 DescnLongue = monAnneeStats.DescnLongue/*,
-                                listeCalendrier = (from patate in monAnneeStats.listeCalendrier select new CalendrierDto { IdPartie = patate.IdPartie }).ToList()*/
+                                ListeParties = (from patate in monAnneeStats.ListeParties select new CalendrierDto { IdPartie = patate.IdPartie }).ToList()*/
                               };
             return Ok(listeAnneeStats);
         }
