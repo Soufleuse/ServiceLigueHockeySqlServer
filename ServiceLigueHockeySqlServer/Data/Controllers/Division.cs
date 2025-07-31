@@ -52,13 +52,13 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                   ConferenceId = division.ConferenceId,
                                   AnneeDebut = division.AnneeDebut,
                                   AnneeFin = division.AnneeFin,
-                                  ConferenceParent = new ConferenceDto
+                                  Conference = new ConferenceDto
                                   {
-                                      Id = division.ConferenceParent.Id,
-                                      NomConference = division.ConferenceParent.NomConference,
-                                      AnneeDebut = division.ConferenceParent.AnneeDebut,
-                                      AnneeFin = division.ConferenceParent.AnneeFin,
-                                      EstDevenueConference = division.ConferenceParent.EstDevenueConference
+                                      Id = division.Conference.Id,
+                                      NomConference = division.Conference.NomConference,
+                                      AnneeDebut = division.Conference.AnneeDebut,
+                                      AnneeFin = division.Conference.AnneeFin,
+                                      EstDevenueConference = division.Conference.EstDevenueConference
                                   }
                               };
             return Ok(listeEquipe);
@@ -82,13 +82,13 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 ConferenceId = divisionBd.ConferenceId,
                 AnneeDebut = divisionBd.AnneeDebut,
                 AnneeFin = divisionBd.AnneeFin,
-                ConferenceParent = new ConferenceDto
+                Conference = new ConferenceDto
                 {
-                    Id = divisionBd.ConferenceParent.Id,
-                    NomConference = divisionBd.ConferenceParent.NomConference,
-                    EstDevenueConference = divisionBd.ConferenceParent.EstDevenueConference,
-                    AnneeDebut = divisionBd.ConferenceParent.AnneeDebut,
-                    AnneeFin = divisionBd.ConferenceParent.AnneeFin
+                    Id = divisionBd.Conference.Id,
+                    NomConference = divisionBd.Conference.NomConference,
+                    EstDevenueConference = divisionBd.Conference.EstDevenueConference,
+                    AnneeDebut = divisionBd.Conference.AnneeDebut,
+                    AnneeFin = divisionBd.Conference.AnneeFin
                 }
             };
 

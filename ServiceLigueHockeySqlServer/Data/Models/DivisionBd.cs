@@ -20,7 +20,7 @@ namespace ServiceLigueHockeySqlServer.Data.Models
 
         public int ConferenceId { get; set; } = int.MinValue;
 
-        public ConferenceBd ConferenceParent { get; set; } = default!;
+        public virtual ConferenceBd Conference { get; set; } = default!;
 
         public virtual ICollection<EquipeBd> listeEquipeBd { get; set; } = default!;
     }

@@ -15,6 +15,6 @@ namespace ServiceLigueHockeySqlServer.Data.Models.Dto
 
         public int ConferenceId { get; set; } = int.MinValue;
 
-        public ConferenceDto ConferenceParent { get; set; } = default!;
+        public virtual ConferenceDto Conference { get; set; } = default!;
     }
 }

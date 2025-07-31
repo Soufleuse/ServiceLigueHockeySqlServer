@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using ServiceLigueHockeySqlServer.Data.Models;
 
@@ -79,9 +80,10 @@ namespace ServiceLigueHockeySqlServer.Data
             modelBuilder.Entity<DivisionBd>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<DivisionBd>().Property(x => x.NomDivision).HasMaxLength(25);
             modelBuilder.Entity<DivisionBd>().HasIndex(x => new { x.NomDivision, x.AnneeDebut }).IsUnique();
-            modelBuilder.Entity<DivisionBd>().HasOne(x => x.ConferenceParent)
+            modelBuilder.Entity<DivisionBd>().HasOne(x => x.Conference).WithMany(y => y.listeDivision).HasForeignKey(d => d.ConferenceId);
+            /*modelBuilder.Entity<DivisionBd>().HasOne(x => x.Conference)
                                              .WithMany(y => y.listeDivision)
-                                             .HasForeignKey(z => z.ConferenceParent);
+                                             .HasForeignKey(z => z.Conference);*/
 
             modelBuilder.Entity<EquipeBd>().ToTable("Equipe");
             modelBuilder.Entity<EquipeBd>().HasKey(c => c.Id);
