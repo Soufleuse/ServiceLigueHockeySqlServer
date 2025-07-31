@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.HttpOverrides;
-using System.Net;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using ServiceLigueHockeySqlServer.Data;
-using System.Reflection.Metadata.Ecma335;
 
 var builder = WebApplication.CreateBuilder(args);
 
