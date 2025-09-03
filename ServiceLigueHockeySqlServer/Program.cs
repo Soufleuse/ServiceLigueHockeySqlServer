@@ -44,7 +44,8 @@ builder.Services.AddCors(options => {
             Func<string, bool> isMonOrigineAllowed = str => { return true; };
             builder.AllowAnyHeader()
                    .AllowAnyMethod()
-                   .WithOrigins("http://localhost:12080", "https://localhost:12080", "http://127.0.0.1:12080", "https://127.0.0.1:12080");
+                   .WithOrigins("http://localhost:12080", "https://localhost:12080", "http://127.0.0.1:12080", "https://127.0.0.1:12080",
+                                "http://localhost:12081", "https://localhost:12081", "http://127.0.0.1:12081", "https://127.0.0.1:12081");
             //.SetIsOriginAllowed(isMonOrigineAllowed)
             //.AllowCredentials()
             //builder.WithOrigins("http://localhost:4900", "https://localhost:4900", "https://localhost:7166", "https://127.0.0.1:4900");
@@ -81,6 +82,40 @@ app.UseCors(monAllowSpecificOrigin);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// Appliquer les migrations automatiquement
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ServiceLigueHockeyContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    var retryCount = 0;
+    var maxRetries = 10;
+
+    while (retryCount < maxRetries)
+    {
+        try
+        {
+            logger.LogInformation("Tentative d'application des migrations...");
+            context.Database.Migrate(); // Équivalent à "dotnet ef database update"
+            logger.LogInformation("Migrations appliquées avec succès");
+            break;
+        }
+        catch (Exception ex)
+        {
+            retryCount++;
+            logger.LogWarning($"Tentative {retryCount}/{maxRetries} échouée: {ex.Message}");
+
+            if (retryCount == maxRetries)
+            {
+                logger.LogError(ex, "Impossible d'appliquer les migrations après {MaxRetries} tentatives", maxRetries);
+                throw;
+            }
+
+            Task.Delay(TimeSpan.FromSeconds(5)).Wait();
+        }
+    }
+}
 
 app.Run();
 

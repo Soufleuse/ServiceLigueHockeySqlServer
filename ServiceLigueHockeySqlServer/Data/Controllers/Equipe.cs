@@ -17,10 +17,12 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
     public class Equipe : ControllerBase
     {
         private readonly ServiceLigueHockeyContext _context;
+        private readonly ILogger _logger;
 
-        public Equipe(ServiceLigueHockeyContext context)
+        public Equipe(ServiceLigueHockeyContext context, ILogger logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Equipe/prochainid
@@ -45,6 +47,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet]
         public ActionResult<IQueryable<EquipeDto>> GetEquipeDto()
         {
+            _logger.LogError("--- Début GetEquipeDto ---");
+
             var listeEquipe = from equipe in _context.equipe
                               select new EquipeDto
                               {
@@ -55,6 +59,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                   AnneeFin = equipe.AnneeFin,
                                   EstDevenueEquipe = equipe.EstDevenueEquipe
                               };
+
+            _logger.LogError("--- Fin GetEquipeDto ---");
             return Ok(listeEquipe);
         }
 
