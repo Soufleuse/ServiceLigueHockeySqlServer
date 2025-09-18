@@ -421,6 +421,12 @@ namespace ServiceLigueHockeySqlServer.Migrations
                 column: "IdEquipeVisiteuse");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Equipe_NomEquipe_Ville",
+                table: "Equipe",
+                columns: new[] { "NomEquipe", "Ville" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EquipeJoueur_EquipeId_JoueurId_DateDebutAvecEquipe",
                 table: "EquipeJoueur",
                 columns: new[] { "EquipeId", "JoueurId", "DateDebutAvecEquipe" },

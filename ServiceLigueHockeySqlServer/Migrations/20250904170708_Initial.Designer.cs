@@ -12,8 +12,8 @@ using ServiceLigueHockeySqlServer.Data;
 namespace ServiceLigueHockeySqlServer.Migrations
 {
     [DbContext(typeof(ServiceLigueHockeyContext))]
-    [Migration("20250625133851_AjoutContrainteUniqueNomEquipe")]
-    partial class AjoutContrainteUniqueNomEquipe
+    [Migration("20250904170708_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

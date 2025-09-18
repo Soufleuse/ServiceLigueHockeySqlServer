@@ -1,16 +1,26 @@
 using Microsoft.AspNetCore.HttpOverrides;
-using System.Net;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
+using Serilog;
 using ServiceLigueHockeySqlServer.Data;
-using System.Reflection.Metadata.Ecma335;
 
 var builder = WebApplication.CreateBuilder(args);
 
 string monAllowSpecificOrigin = "monAllowSpecificOrigin";
 
-// Add services to the container.
+// Maintenant, utiliser le fichier fusionné
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
 
+// Configuration Serilog
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.FromLogContext()
+        .Enrich.WithProperty("Application", "ServiceLigueHockeySqlServer");
+});
+
+// Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -38,9 +48,11 @@ builder.Services.AddDbContext<ServiceLigueHockeyContext>(options => {
     options.UseSqlServer(connectionString);
 });
 
-builder.Services.AddCors(options => {
+builder.Services.AddCors(options =>
+{
     options.AddPolicy(name: monAllowSpecificOrigin,
-        builder => {
+        builder =>
+        {
             Func<string, bool> isMonOrigineAllowed = str => { return true; };
             builder.AllowAnyHeader()
                    .AllowAnyMethod()
@@ -53,7 +65,7 @@ builder.Services.AddCors(options => {
             //builder.WithMethods("*");
             //builder.WithMethods("POST","GET","PUT","OPTIONS");
         });
-    
+
     /*options.AddDefaultPolicy(builder => {
         builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
     });*/
@@ -83,6 +95,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Middleware Serilog pour les requêtes HTTP
+app.UseSerilogRequestLogging();
+
 // Appliquer les migrations automatiquement
 using (var scope = app.Services.CreateScope())
 {
@@ -96,10 +111,20 @@ using (var scope = app.Services.CreateScope())
     {
         try
         {
-            logger.LogInformation("Tentative d'application des migrations...");
-            context.Database.Migrate(); // Équivalent à "dotnet ef database update"
-            logger.LogInformation("Migrations appliquées avec succès");
-            break;
+            logger.LogInformation("Vérification des migrations en attente...");
+            var pendingMigrations = context.Database.GetPendingMigrations();
+
+            if (pendingMigrations.Any())
+            {
+                logger.LogInformation("Tentative d'application des migrations...");
+                context.Database.Migrate(); // Équivalent à "dotnet ef database update"
+                logger.LogInformation("Migrations appliquées avec succès");
+            }
+            else
+            {
+                logger.LogInformation("Aucune migration en attente");
+                break;
+            }
         }
         catch (Exception ex)
         {

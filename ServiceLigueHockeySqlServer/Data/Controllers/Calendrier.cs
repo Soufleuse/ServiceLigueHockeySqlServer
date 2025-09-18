@@ -11,16 +11,21 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
     public class Calendrier : ControllerBase
     {
         private readonly ServiceLigueHockeyContext _context;
+        private readonly ILogger<Calendrier> _logger;
 
-        public Calendrier(ServiceLigueHockeyContext context)
+        public Calendrier(ServiceLigueHockeyContext context,
+                          ILogger<Calendrier> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Calendrier
         [HttpGet]
         public ActionResult<IQueryable<CalendrierDto>> GetCalendrierDto()
         {
+            this._logger.LogInformation("--- GetCalendrierDto ---");
+
             var listeCalendrier = from monCalendrier in _context.calendriers
                               select new CalendrierDto
                               {
@@ -39,6 +44,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                 SommairePartie = monCalendrier.SommairePartie
                               };
 
+            this._logger.LogInformation("--- Fin GetCalendrierDto ---");
             return Ok(listeCalendrier);
         }
 
@@ -46,6 +52,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("{idPartie}")]
         public async Task<ActionResult<CalendrierDto>> GetCalendrierDto(int idPartie)
         {
+            this._logger.LogInformation("--- Début GetCalendrierDto ---");
+
             var calendrierBd = await _context.calendriers.FindAsync(idPartie);
 
             if (calendrierBd == null)
@@ -70,6 +78,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 SommairePartie = calendrierBd.SommairePartie
             };
 
+            this._logger.LogInformation("--- Fin GetCalendrierDto ---");
             return Ok(calendrierDto);
         }
 
@@ -78,8 +87,11 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPut("{idPartie}")]
         public async Task<IActionResult> PutCalendrier(int idPartie, CalendrierDto calendrier)
         {
+            this._logger.LogInformation("--- Début PutCalendrier ---");
+
             if (idPartie != calendrier.IdPartie)
             {
+                this._logger.LogError("Mauvaise requête");
                 return BadRequest();
             }
 
@@ -100,22 +112,28 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 SommairePartie = calendrier.SommairePartie
             };
 
-            _context.Entry(calendrier).State = EntityState.Modified;
+            _context.Entry(calendrierBd).State = EntityState.Modified;
 
             try
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException dbEx)
             {
                 if (!CalendrierBdExists(idPartie))
                 {
+                    this._logger.LogError("Partie non-trouvée");
                     return NotFound();
                 }
                 else
                 {
+                    this._logger.LogError(string.Format("Erreur DbUpdateConcurrencyException : {0}", dbEx.Message));
                     throw;
                 }
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PutCalendrier ---");
             }
 
             return NoContent();
@@ -126,6 +144,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPost]
         public async Task<ActionResult<CalendrierDto>> PostCalendrierDto(CalendrierDto calendrier)
         {
+            this._logger.LogInformation("--- Début PostCalendrierDto ---");
+
             var calendrierBd = new CalendrierBd
             {
                 IdPartie = calendrier.IdPartie,
@@ -148,6 +168,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
             calendrier.IdPartie = calendrierBd.IdPartie;
 
+            this._logger.LogInformation("--- Fin PostCalendrierDto ---");
             return CreatedAtAction("PostCalendrierDto", calendrier);
         }
 
@@ -155,20 +176,25 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpDelete("{idPartie}")]
         public async Task<IActionResult> DeleteCalendrier(int idPartie)
         {
+            this._logger.LogInformation("--- Début DeleteCalendrier ---");
+
             var calendrierBd = await _context.calendriers.FindAsync(idPartie);
             if (calendrierBd == null)
             {
+                this._logger.LogError("Partie non-trouvée");
                 return NotFound();
             }
 
             _context.calendriers.Remove(calendrierBd);
             await _context.SaveChangesAsync();
 
+            this._logger.LogInformation("--- Fin DeleteCalendrier ---");
             return NoContent();
         }
 
         private bool CalendrierBdExists(int idPartie)
         {
+            this._logger.LogInformation("--- Passage dans CalendrierBdExists ---");
             return _context.calendriers.Any(e => e.IdPartie == idPartie);
         }
     }

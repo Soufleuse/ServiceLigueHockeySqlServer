@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +16,9 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
     public class Equipe : ControllerBase
     {
         private readonly ServiceLigueHockeyContext _context;
-        private readonly ILogger _logger;
+        private readonly ILogger<Equipe> _logger;
 
-        public Equipe(ServiceLigueHockeyContext context, ILogger logger)
+        public Equipe(ServiceLigueHockeyContext context, ILogger<Equipe> logger)
         {
             _context = context;
             _logger = logger;
@@ -29,6 +28,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("prochainid")]
         public ActionResult<int> GetProchainIdEquipe()
         {
+            this._logger.LogInformation("--- Début GetProchainIdEquipe ---");
             var listeEquipe = (from equipe in _context.equipe
                                select equipe)
                                .OrderByDescending(x => x.Id)
@@ -40,6 +40,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 retour = listeEquipe.Id + 1;
             }
 
+            this._logger.LogInformation("--- Fin GetProchainIdEquipe ---");
             return Ok(retour);
         }
 
@@ -47,7 +48,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet]
         public ActionResult<IQueryable<EquipeDto>> GetEquipeDto()
         {
-            _logger.LogError("--- Début GetEquipeDto ---");
+            _logger.LogInformation("--- Début GetEquipeDto ---");
 
             var listeEquipe = from equipe in _context.equipe
                               select new EquipeDto
@@ -60,7 +61,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                   EstDevenueEquipe = equipe.EstDevenueEquipe
                               };
 
-            _logger.LogError("--- Fin GetEquipeDto ---");
+            _logger.LogInformation("--- Fin GetEquipeDto ---");
             return Ok(listeEquipe);
         }
 
@@ -68,10 +69,12 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<EquipeDto>> GetEquipeDto(int id)
         {
+            this._logger.LogInformation("--- Début GetEquipeDto ---");
             var equipeBd = await _context.equipe.FindAsync(id);
 
             if (equipeBd == null)
             {
+                this._logger.LogError("Équipe non-trouvée");
                 return NotFound();
             }
 
@@ -85,6 +88,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 EstDevenueEquipe = equipeBd.EstDevenueEquipe
             };
 
+            this._logger.LogInformation("--- Fin GetEquipeDto ---");
             return Ok(equipeDto);
         }
 
@@ -92,15 +96,18 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("nomequipeville/{id}")]
         public async Task<ActionResult<string>> GetNomEquipe(int id)
         {
+            this._logger.LogInformation("--- Début GetNomEquipe ---");
             var equipeBd = await _context.equipe.FindAsync(id);
 
             if (equipeBd == null)
             {
+                this._logger.LogError("Équipe non-trouvée");
                 return NotFound();
             }
 
             var nomEquipeVille = string.Concat(equipeBd.NomEquipe, " ", equipeBd.Ville);
 
+            this._logger.LogInformation("--- Fin GetNomEquipe ---");
             return Ok(nomEquipeVille);
         }
 
@@ -109,8 +116,11 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEquipe(int id, EquipeDto equipeDto)
         {
+            this._logger.LogInformation("--- Début PutEquipe ---");
+
             if (id != equipeDto.Id)
             {
+                this._logger.LogError("Mauvaise requête");
                 return BadRequest();
             }
 
@@ -134,10 +144,13 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 if (!EquipeBdExists(id))
                 {
+                    this._logger.LogError("Équipe non-trouvée");
                     return NotFound();
                 }
                 else
                 {
+                    this._logger.LogError("Une erreur est survenue lors de la sauvegarde de l'équipe.");
+
                     var mesDefautsSerialisation = new JsonSerializerOptions(JsonSerializerDefaults.Web);
                     mesDefautsSerialisation.WriteIndented = true;
                     Response.StatusCode = 500;
@@ -149,9 +162,12 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                         byte[] innerExStacktrace =
                             Encoding.Default.GetBytes(string.IsNullOrEmpty(ex.InnerException.StackTrace) ? string.Empty : ex.InnerException.StackTrace);
                         string innerExStacktraceUtf8 = Encoding.UTF8.GetString(innerExStacktrace);
+                        this._logger.LogError(string.Format("{0} - {1}", ex.Message, innerExMessage));
                         return new JsonResult(new { Message = innerExMsgUtf8, StackTrace = innerExStacktraceUtf8 },
                                               mesDefautsSerialisation);
                     }
+
+                    this._logger.LogError(string.Format("{0}", ex.Message));
                     return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
                                           mesDefautsSerialisation);
 
@@ -165,11 +181,18 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
                 if (ex.InnerException != null)
                 {
+                    this._logger.LogError(string.Format("{0} - {1}", ex.Message, ex.InnerException.Message));
                     return new JsonResult(new { Message = ex.InnerException.Message, StackTrace = ex.InnerException.StackTrace },
                                           mesDefautsSerialisation);
                 }
+
+                this._logger.LogError(string.Format("{0}", ex.Message));
                 return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
                                       mesDefautsSerialisation);
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PutEquipe ---");
             }
 
             return NoContent();
@@ -180,6 +203,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPost]
         public async Task<ActionResult<EquipeDto>> PostEquipeDto(EquipeDto equipe)
         {
+            this._logger.LogInformation("--- Début PostEquipeDto ---");
+
             var equipeBd = new EquipeBd
             {
                 Id = equipe.Id,
@@ -205,11 +230,18 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
                 if (ex.InnerException != null)
                 {
+                    this._logger.LogError(string.Format("{0} - {1}", ex.Message, ex.InnerException));
                     return new JsonResult(new { Message = ex.InnerException.Message, StackTrace = ex.InnerException.StackTrace },
                                           mesDefautsSerialisation);
                 }
+
+                this._logger.LogError(string.Format("{0} - {1}", ex.Message, ex.InnerException));
                 return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
                                       mesDefautsSerialisation);
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PostEquipeDto ---");
             }
 
             return CreatedAtAction("PostEquipeDto", equipe);
@@ -219,20 +251,25 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEquipe(int id)
         {
+            this._logger.LogInformation("--- Début DeleteEquipe ---");
+
             var equipeBd = await _context.equipe.FindAsync(id);
             if (equipeBd == null)
             {
+                this._logger.LogInformation("--- Équipe non-trouvée ---");
                 return NotFound();
             }
 
             _context.equipe.Remove(equipeBd);
             await _context.SaveChangesAsync();
 
+            this._logger.LogInformation("--- Fin DeleteEquipe ---");
             return NoContent();
         }
 
         private bool EquipeBdExists(int id)
         {
+            this._logger.LogInformation("--- Passage dans EquipeBdExists ---");
             return _context.equipe.Any(e => e.Id == id);
         }
     }

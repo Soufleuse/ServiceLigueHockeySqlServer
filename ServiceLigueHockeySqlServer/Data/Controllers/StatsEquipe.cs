@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using ServiceLigueHockeySqlServer.Data.Models;
 using ServiceLigueHockeySqlServer.Data.Models.Dto;
 
@@ -13,16 +14,20 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
     public class StatsEquipe : ControllerBase
     {
         private readonly ServiceLigueHockeyContext _context;
+        private readonly ILogger<StatsEquipe> _logger;
 
-        public StatsEquipe(ServiceLigueHockeyContext context)
+        public StatsEquipe(ServiceLigueHockeyContext context, ILogger<StatsEquipe> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/StatsEquipe/parannee/{annee})
         [HttpGet("parannee/{annee}")]
         public ActionResult<IQueryable<StatsEquipeDto>> GetStatsEquipe(short annee)
         {
+            this._logger.LogInformation("--- Début GetStatsEquipe ---");
+
             var listeStatsEquipe = _context.statsEquipe
                                    .Where(statEquipe => statEquipe.AnneeStats == annee)
                                    .OrderByDescending(x => x.NbVictoires)
@@ -45,12 +50,16 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                             EstDevenueEquipe = item.Equipe.AnneeFin
                                        }
                                    });
+
+            this._logger.LogInformation("--- Fin GetStatsEquipe ---");
             return Ok(listeStatsEquipe);
         }
 
         [HttpGet("{equipeId}/{anneeStats}")]
         public ActionResult<StatsEquipeDto> GetStatsEquipe(int equipeId, short anneeStats)
         {
+            this._logger.LogInformation("--- Début GetStatsEquipe ---");
+
             var retour = _context.statsEquipe
                 .Where(x => x.EquipeId == equipeId && x.AnneeStats == anneeStats)
                 .OrderByDescending(x => x.NbVictoires)
@@ -76,17 +85,22 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
             if (retour == null)
             {
+                this._logger.LogError("Stat équipe non-trouvée");
                 return NotFound();
             }
 
+            this._logger.LogInformation("--- Fin GetStatsEquipe ---");
             return Ok(retour);
         }
 
         [HttpPut("{equipeId}/{annee}")]
         public async Task<IActionResult> PutStatsEquipe(int equipeId, short annee, StatsEquipeDto statsEquipeDto)
         {
+            this._logger.LogInformation("--- Début PutStatsEquipe ---");
+
             if (equipeId != statsEquipeDto.equipeId && annee != statsEquipeDto.anneeStats)
             {
+                this._logger.LogError("Mauvaise requête");
                 return BadRequest();
             }
 
@@ -107,16 +121,22 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException dbEx)
             {
+                this._logger.LogError(string.Format("Erreur dans PutStatsEquipe : {0}", dbEx.Message));
                 if (!StatsEquipeBdExists(equipeId, annee))
                 {
+                    this._logger.LogError("Stats équipe non-trouvée");
                     return NotFound();
                 }
                 else
                 {
-                    throw;
+                    return StatusCode(500);
                 }
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PutStatsEquipe ---");
             }
 
             return NoContent();
@@ -125,6 +145,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPost]
         public async Task<ActionResult<StatsEquipeDto>> PostStatsEquipe(StatsEquipeDto statsEquipeDto)
         {
+            this._logger.LogInformation("--- Début PostStatsEquipe ---");
+
             var statsEquipeBd = new StatsEquipeBd {
                 AnneeStats = statsEquipeDto.anneeStats,
                 NbPartiesJouees = statsEquipeDto.nbPartiesJouees,
@@ -152,16 +174,23 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException dbEx)
             {
                 if (StatsEquipeBdExists(statsEquipeBd.EquipeId, statsEquipeBd.AnneeStats))
                 {
-                    return Conflict(ex);
+                    this._logger.LogError(string.Format("Un autre item de type statistique joueur avec le même id existe; equipe id {0} - annee stats {1}",
+                                                        statsEquipeBd.EquipeId, statsEquipeBd.AnneeStats));
+                    return Conflict(dbEx);
                 }
                 else
                 {
-                    throw;
+                    this._logger.LogError(string.Format("Erreur dans PostStatsEquipe : {0}", dbEx.Message));
+                    return StatusCode(500);
                 }
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PostStatsEquipe ---");
             }
 
             return CreatedAtAction("PostStatsEquipe", statsEquipeDto);
@@ -184,6 +213,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
         private bool StatsEquipeBdExists(int id, short annee)
         {
+            this._logger.LogInformation("Passage dans StatsEquipeBdExists");
             return _context.statsEquipe.Any(e => e.EquipeId == id && e.AnneeStats == annee);
         }
     }
