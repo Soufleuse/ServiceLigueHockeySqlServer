@@ -46,8 +46,10 @@ namespace ServiceLigueHockeySqlServer.Data
             if (!optionsBuilder.IsConfigured)
             {
                 var connectionString = this.Configuration.GetConnectionString("sqlServerConnection");
-                if(string.IsNullOrEmpty(connectionString))
+                if (string.IsNullOrEmpty(connectionString))
+                {
                     throw new System.Exception("La chaine de connexion est vide.");
+                }
 
                 optionsBuilder.UseSqlServer(connectionString);
             }
