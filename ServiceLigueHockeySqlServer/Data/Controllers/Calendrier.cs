@@ -26,7 +26,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         {
             this._logger.LogInformation("--- GetCalendrierDto ---");
 
-            var listeCalendrier = from monCalendrier in _context.calendriers
+            var ListeParties = from monCalendrier in _context.calendriers
+
                               select new CalendrierDto
                               {
                                 IdPartie = monCalendrier.IdPartie,
@@ -45,7 +46,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                               };
 
             this._logger.LogInformation("--- Fin GetCalendrierDto ---");
-            return Ok(listeCalendrier);
+            return Ok(ListeParties);
         }
 
         // GET: api/Calendrier/5
