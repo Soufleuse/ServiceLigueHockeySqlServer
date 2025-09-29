@@ -9,21 +9,32 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class Pointeur : ControllerBase
-    {private readonly ServiceLigueHockeyContext _context;
+    {
+        private readonly ServiceLigueHockeyContext _context;
+        private readonly ILogger<Pointeur> _logger;
 
-        public Pointeur(ServiceLigueHockeyContext context)
+        public Pointeur(ServiceLigueHockeyContext context, ILogger<Pointeur> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Pointeur
         [HttpGet]
         public ActionResult<IQueryable<PointeursDto>> GetPointeursDto()
         {
+            this._logger.LogInformation("--- Début GetPointeursDto ---");
             var listePointeur = from monPointeur in _context.pointeurs
-                              select new PointeursDto
-                              {
-                              };
+                                select new PointeursDto
+                                {
+                                    IdPartie = monPointeur.IdPartie,
+                                    IdJoueurButMarque = monPointeur.IdJoueurButMarque,
+                                    IdJoueurPremiereAssistance = monPointeur.IdJoueurPremiereAssistance,
+                                    IdJoueurSecondeAssistance = monPointeur.IdJoueurSecondeAssistance,
+                                    MomentDuButMarque = monPointeur.MomentDuButMarque
+                                };
+
+            this._logger.LogInformation("--- Fin GetPointeursDto ---");
             return Ok(listePointeur);
         }
 
@@ -31,18 +42,27 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("{idPartie}")]
         public async Task<ActionResult<PointeursDto>> GetPointeursDto(int idPartie)
         {
+            this._logger.LogInformation("--- Début GetPointeursDto avec idPartie ---");
+
             var pointeursBd = await _context.pointeurs.FindAsync(idPartie);
 
             if (pointeursBd == null)
             {
+                this._logger.LogError("Pointeur non-trouvé");
                 return NotFound();
             }
 
             var pointeursDto = new PointeursDto
             {
+                IdPartie = pointeursBd.IdPartie,
+                IdJoueurButMarque = pointeursBd.IdJoueurButMarque,
+                IdJoueurPremiereAssistance = pointeursBd.IdJoueurPremiereAssistance,
+                IdJoueurSecondeAssistance = pointeursBd.IdJoueurSecondeAssistance,
+                MomentDuButMarque = pointeursBd.MomentDuButMarque
             };
 
-            return Ok(pointeursBd);
+            this._logger.LogInformation("--- Fin GetPointeursDto avec idPartie ---");
+            return Ok(pointeursDto);
         }
 
         // PUT: api/Pointeur/5

@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ServiceLigueHockeySqlServer.Data;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Serilog;
 using ServiceLigueHockeySqlServer.Data.Models;
 using ServiceLigueHockeySqlServer.Data.Models.Dto;
 
@@ -15,16 +13,20 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
     public class StatsJoueur : ControllerBase
     {
         private readonly ServiceLigueHockeyContext _context;
+        private readonly ILogger<StatsJoueur> _logger;
 
-        public StatsJoueur(ServiceLigueHockeyContext context)
+        public StatsJoueur(ServiceLigueHockeyContext context, ILogger<StatsJoueur> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/StatsJoueur/parannee/2020
         [HttpGet("parannee/{annee}")]
         public ActionResult<IEnumerable<StatsJoueurDto>> GetStatsJoueurBd(short annee)
         {
+            this._logger.LogInformation("--- Début GetStatsJoueurBd ---");
+
             var listeStats = _context.statsJoueurBd
                 .Where(x => x.AnneeStats == annee)
                 .OrderByDescending(x => x.NbPoints)
@@ -66,6 +68,13 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                     }
                 });
 
+            if (listeStats == null || !listeStats.Any())
+            {
+                this._logger.LogError("Liste de statistiques vide");
+                return NotFound();
+            }
+
+            this._logger.LogInformation("--- Fin GetStatsJoueurBd ---");
             return Ok(listeStats.ToList());
         }
 
@@ -73,6 +82,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("{id}/{anneeStats}")]
         public ActionResult<StatsJoueurDto> GetStatsJoueurBd(int id, short anneeStats)
         {
+            this._logger.LogInformation("--- Début GetStatsJoueurBd avec id et anneeStats ---");
+
             var retour = _context.statsJoueurBd
                 .Where(x => x.JoueurId == id && x.AnneeStats == anneeStats)
                 .Select(statsJoueurBd => new StatsJoueurDto
@@ -115,9 +126,11 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
             if (retour == null)
             {
+                this._logger.LogError("Statistique de joueur non-trouvée");
                 return NotFound();
             }
 
+            this._logger.LogInformation("--- Fin GetStatsJoueurBd avec id et anneeStats ---");
             return Ok(retour);
         }
 
@@ -126,8 +139,11 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPut("{id}/{annee}")]
         public async Task<IActionResult> PutStatsJoueurBd(int id, short annee, StatsJoueurDto statsJoueurDto)
         {
+            this._logger.LogInformation("--- Début PutStatsJoueurBd ---");
+
             if (id != statsJoueurDto.JoueurId && annee != statsJoueurDto.AnneeStats)
             {
+                this._logger.LogError("Mauvaise requête");
                 return BadRequest();
             }
 
@@ -175,16 +191,22 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException dbEx)
             {
                 if (!StatsJoueurBdExists(id, annee))
                 {
+                    this._logger.LogError("Statistique non-trouvée");
                     return NotFound();
                 }
                 else
                 {
-                    throw;
+                    this._logger.LogError(string.Format("Erreur dans PutStatsJoueurBd : {0}", dbEx.Message));
+                    return StatusCode(500);
                 }
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PutStatsJoueurBd ---");
             }
 
             return NoContent();
@@ -195,6 +217,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPost]
         public async Task<ActionResult<StatsJoueurDto>> PostStatsJoueurBd(StatsJoueurDto statsJoueurDto)
         {
+            this._logger.LogInformation("--- Début PostStatsJoueurBd ---");
+
             var joueurBd = new JoueurBd
             {
                 Id = statsJoueurDto.Joueur.Id,
@@ -204,16 +228,6 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 PaysOrigine = statsJoueurDto.Joueur.PaysOrigine,
                 DateNaissance = statsJoueurDto.Joueur.DateNaissance,
                 listeStatsJoueur = new List<StatsJoueurBd>()
-            };
-
-            var equipeBd = new EquipeBd
-            {
-                Id = statsJoueurDto.Equipe.Id,
-                NomEquipe = statsJoueurDto.Equipe.NomEquipe,
-                Ville = statsJoueurDto.Equipe.Ville,
-                AnneeDebut = statsJoueurDto.Equipe.AnneeDebut,
-                AnneeFin = statsJoueurDto.Equipe.AnneeFin,
-                EstDevenueEquipe = statsJoueurDto.Equipe.EstDevenueEquipe
             };
 
             var statsJoueurBd = new StatsJoueurBd
@@ -264,16 +278,23 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException dbEx)
             {
                 if (StatsJoueurBdExists(statsJoueurBd.JoueurId, statsJoueurBd.AnneeStats))
                 {
-                    return Conflict(ex);
+                    this._logger.LogError("Un autre item de type statistique joueur avec le même id existe; joueur id {0} - equipe id {1} - annee stats {2}",
+                                          statsJoueurBd.JoueurId, statsJoueurBd.EquipeId, statsJoueurBd.AnneeStats);
+                    return Conflict(dbEx);
                 }
                 else
                 {
-                    throw;
+                    this._logger.LogError(string.Format("Erreur dans PostStatsJoueurBd : {0} ", dbEx.Message));
+                    return StatusCode(500);
                 }
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PostStatsJoueurBd ---");
             }
 
             return CreatedAtAction("PostStatsJoueurBd", statsJoueurDto);
@@ -283,20 +304,36 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpDelete("{id}/{annee}")]
         public async Task<IActionResult> DeleteStatsJoueurBd(int id, short annee)
         {
+            this._logger.LogInformation("--- Début DeleteStatsJoueurBd ---");
             var statsJoueurBd = await _context.statsJoueurBd.FindAsync(id, annee);
             if (statsJoueurBd == null)
             {
+                this._logger.LogError("Stats joueur non-trouvée");
                 return NotFound();
             }
 
             _context.statsJoueurBd.Remove(statsJoueurBd);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format("Erreur dans DeleteStatsJoueurBd : {0}", ex.Message));
+                return StatusCode(500);
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin DeleteStatsJoueurBd ---");
+            }
 
             return NoContent();
         }
 
         private bool StatsJoueurBdExists(int id, short annee)
         {
+            this._logger.LogInformation("Passage dans StatsJoueurBdExists");
             return _context.statsJoueurBd.Any(e => e.JoueurId == id && e.AnneeStats == annee);
         }
     }

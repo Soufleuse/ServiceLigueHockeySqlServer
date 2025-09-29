@@ -361,4 +361,11 @@ MigrationBackup/
 .vs/GererEquipe/v17/.futdcache.v2
 .vs/GererEquipe/DesignTimeBuild/.dtbcache.v2
 
+# Mes ajouts
+*-bck.*
+*.bck
+.env
+appsettings*.json
+!appsettings.template.json
+messecrets.json
 Migrations/

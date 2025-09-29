@@ -14,16 +14,21 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
     public class EquipeJoueur : ControllerBase
     {
         private readonly ServiceLigueHockeyContext _context;
+        private readonly ILogger<EquipeJoueur> _logger;
 
-        public EquipeJoueur(ServiceLigueHockeyContext context)
+        public EquipeJoueur(ServiceLigueHockeyContext context,
+                            ILogger<EquipeJoueur> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/equipeJoueur
         [HttpGet]
         public ActionResult<IList<EquipeJoueurDto>> GetEquipeJoueur()
         {
+            this._logger.LogInformation("--- Début GetEquipeJoueur ---");
+
             var listeEquipeJoueur = from item in _context.equipeJoueur
                                     select new EquipeJoueurDto
                                     {
@@ -57,6 +62,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 monJoueur.PrenomNomJoueur = unJoueur.Prenom + " " + unJoueur.Nom;
             });
 
+            this._logger.LogInformation("--- Fin GetEquipeJoueur ---");
             return Ok(retour);
         }
 
@@ -64,6 +70,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("parequipe/{equipeId}/")]
         public ActionResult<EquipeJoueurDto> GetEquipeJoueurParEquipe(int equipeId)
         {
+            this._logger.LogInformation("--- Début GetEquipeJoueurParEquipe ---");
+
             var lecture = from item in _context.equipeJoueur
                              where item.EquipeId == equipeId &&
                                    (!item.DateFinAvecEquipe.HasValue || item.DateFinAvecEquipe.Value > DateTime.Now)
@@ -80,9 +88,11 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
             if (lecture == null)
             {
+                this._logger.LogError("Items non-trouvées");
                 return NotFound();
             }
 
+            this._logger.LogInformation("--- Fin GetEquipeJoueurParEquipe ---");
             return Ok(lecture.AsEnumerable());
         }
 
@@ -90,6 +100,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("{id}/")]
         public ActionResult<EquipeJoueurDto> GetEquipeJoueur(int Id)
         {
+            this._logger.LogInformation("--- Début GetEquipeJoueur ---");
+
             var lecture = (from item in _context.equipeJoueur
                            where item.Id == Id
                            select new EquipeJoueurDto
@@ -104,6 +116,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
             if (lecture == null)
             {
+                this._logger.LogError("Item non-trouvé");
                 return NotFound();
             }
 
@@ -116,6 +129,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 DateFinAvecEquipe = lecture.DateFinAvecEquipe
             };
 
+            this._logger.LogInformation("--- Fin GetEquipeJoueur ---");
             return Ok(retour);
         }
 
@@ -124,8 +138,11 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEquipeJoueurBd(int Id, EquipeJoueurDto equipeJoueurDto)
         {
+            this._logger.LogInformation("--- Début PutEquipeJoueurBd ---");
+
             if (Id != equipeJoueurDto.Id)
             {
+                this._logger.LogError("Mauvaise requête");
                 return BadRequest();
             }
 
@@ -145,16 +162,22 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException dbEx)
             {
                 if (!EquipeJoueurBdExists(Id))
                 {
+                    this._logger.LogError("Item non-trouvé");
                     return NotFound();
                 }
                 else
                 {
+                    this._logger.LogError(dbEx.Message + (dbEx.InnerException == null ? string.Empty : dbEx.InnerException.Message));
                     throw;
                 }
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PutEquipeJoueurBd ---");
             }
 
             return NoContent();
@@ -165,6 +188,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPost]
         public async Task<ActionResult<EquipeJoueurDto>> PostEquipeJoueur(EquipeJoueurDto equipeJoueurDto)
         {
+            this._logger.LogInformation("--- Début PostEquipeJoueur ---");
+
             var equipeJoueurBd = new EquipeJoueurBd
             {
                 Id = equipeJoueurDto.Id,
@@ -180,20 +205,23 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException dbEx)
             {
                 if (EquipeJoueurBdExists(equipeJoueurBd.Id))
                 {
+                    this._logger.LogError(string.Format("Un autre item de type equipeJoueur avec le même id existe; id {0}", equipeJoueurBd.Id));
                     return Conflict();
                 }
                 else
                 {
+                    this._logger.LogError(string.Format("Erreur dans PostEquipeJoueur, message : {0}", dbEx.Message));
                     throw;
                 }
             }
 
             equipeJoueurDto.Id = equipeJoueurBd.Id;
 
+            this._logger.LogInformation("--- Fin PostEquipeJoueur ---");
             return CreatedAtAction("PostEquipeJoueur", equipeJoueurDto);
         }
 
@@ -201,20 +229,36 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpDelete("{Id}")]
         public async Task<IActionResult> DeleteEquipeJoueurBd(int Id)
         {
+            this._logger.LogInformation("--- Début DeleteEquipeJoueurBd ---");
+
             var equipeJoueurBd = await _context.equipeJoueur.FindAsync(Id);
             if (equipeJoueurBd == null)
             {
+                this._logger.LogInformation("Équipe non-trouvée");
                 return NotFound();
             }
 
-            _context.equipeJoueur.Remove(equipeJoueurBd);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.equipeJoueur.Remove(equipeJoueurBd);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(ex.Message);
+                return StatusCode(500);
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin DeleteEquipeJoueurBd ---");
+            }
 
             return NoContent();
         }
 
         private bool EquipeJoueurBdExists(int Id)
         {
+            this._logger.LogInformation("--- On passe dans EquipeJoueurBdExists ---");
             return _context.equipeJoueur.Any(e => e.Id == Id);
         }
     }

@@ -1,0 +1,22 @@
+services:
+  sqlserver-api:
+    build: .
+    container_name: sqlserver-ligueHockey-api
+    ports:
+      - "14330:1433"  # SQL Server
+      - "5246:5246"  # API HTTP
+     # - "5247:5247"  # API HTTPS
+    volumes:
+      - ./sqlserver-data:/var/opt/mssql  # Volume persistant pour SQL Server
+    env_file:
+          - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5246
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'mOtdepAssedemarde#01' -Q 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
