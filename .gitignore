@@ -365,7 +365,6 @@ MigrationBackup/
 *-bck.*
 *.bck
 .env
-appsettings*.json
-!appsettings.template.json
+ServiceLigueHockeySqlServer/appsettings*.json
+!ServiceLigueHockeySqlServer/appsettings.template.json
 messecrets.json
-Migrations/
