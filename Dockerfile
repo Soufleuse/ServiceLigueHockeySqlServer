@@ -39,9 +39,9 @@ RUN echo $MSSQL_PID
 
 # Créer le script d'initialisation de la base de données
 RUN echo '#!/bin/bash' > /init-db.sh && \
-    echo 'echo "Création de lutilisateur application et de la base de données..."' >> /init-db.sh && \
+    echo 'echo "Création de l''utilisateur application et de la base de données..."' >> /init-db.sh && \
     echo '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P $MSSQL_SA_PASSWORD -C -Q "CREATE LOGIN [lemste] WITH PASSWORD = '"'"'Misty@00'"'"'; CREATE DATABASE [LigueHockey]; USE [LigueHockey]; CREATE USER [lemste] FOR LOGIN [lemste]; ALTER ROLE [db_owner] ADD MEMBER [lemste];GO"' >> /init-db.sh && \
-    echo 'echo "Base de donnees initialisée."' >> /init-db.sh && \
+    echo 'echo "Base de données initialisée."' >> /init-db.sh && \
     chmod +x /init-db.sh
 
 # Créer le script de démarrage principal
