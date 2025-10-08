@@ -58,7 +58,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                   Ville = equipe.Ville,
                                   AnneeDebut = equipe.AnneeDebut,
                                   AnneeFin = equipe.AnneeFin,
-                                  EstDevenueEquipe = equipe.EstDevenueEquipe
+                                  EstDevenueEquipe = equipe.EstDevenueEquipe,
+                                  DivisionId = equipe.DivisionId
                               };
 
             _logger.LogInformation("--- Fin GetEquipeDto ---");
@@ -212,7 +213,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 Ville = equipe.Ville,
                 AnneeDebut = equipe.AnneeDebut,
                 AnneeFin = equipe.AnneeFin,
-                EstDevenueEquipe = equipe.EstDevenueEquipe
+                EstDevenueEquipe = equipe.EstDevenueEquipe,
+                DivisionId = equipe.DivisionId
             };
 
             try

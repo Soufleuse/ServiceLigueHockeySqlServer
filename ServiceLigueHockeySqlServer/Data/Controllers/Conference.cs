@@ -1,5 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
@@ -17,16 +16,19 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
     public class Conference : ControllerBase
     {
         private readonly ServiceLigueHockeyContext _context;
+        private readonly ILogger<Conference> _logger;
 
-        public Conference(ServiceLigueHockeyContext context)
+        public Conference(ServiceLigueHockeyContext context, ILogger<Conference> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Conference/prochainid
         [HttpGet("prochainid")]
         public ActionResult<int> GetProchainIdConference()
         {
+            this._logger.LogInformation("--- Début GetProchainIdConference ---");
             var listeConference = (from conference in _context.conference
                                    select conference)
                                    .OrderByDescending(x => x.Id)
@@ -38,6 +40,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 retour = listeConference.Id + 1;
             }
 
+            this._logger.LogInformation("--- Fin GetProchainIdConference ---");
             return Ok(retour);
         }
 
@@ -45,15 +48,19 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet]
         public ActionResult<IQueryable<ConferenceDto>> GetConferenceDto()
         {
+            this._logger.LogInformation("--- Début GetConferenceDto ---");
+
             var listeConference = from conference in _context.conference
-                              select new ConferenceDto
-                              {
-                                  Id = conference.Id,
-                                  NomConference = conference.NomConference,
-                                  AnneeDebut = conference.AnneeDebut,
-                                  AnneeFin = conference.AnneeFin,
-                                  EstDevenueConference = conference.EstDevenueConference
-                              };
+                                  select new ConferenceDto
+                                  {
+                                      Id = conference.Id,
+                                      NomConference = conference.NomConference,
+                                      AnneeDebut = conference.AnneeDebut,
+                                      AnneeFin = conference.AnneeFin,
+                                      EstDevenueConference = conference.EstDevenueConference
+                                  };
+
+            this._logger.LogInformation("--- Fin GetConferenceDto ---");
             return Ok(listeConference);
         }
 
@@ -61,10 +68,12 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ConferenceDto>> GetConferenceDto(int id)
         {
+            this._logger.LogInformation("--- Début GetConferenceDto ---");
             var conferenceBd = await _context.conference.FindAsync(id);
 
             if (conferenceBd == null)
             {
+                this._logger.LogInformation(string.Format("Conférence no {0} non trouvée", id));
                 return NotFound();
             }
 
@@ -77,6 +86,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 EstDevenueConference = conferenceBd.EstDevenueConference
             };
 
+            this._logger.LogInformation("--- Fin GetConferenceDto ---");
             return Ok(conferenceDto);
         }
 
@@ -85,8 +95,10 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutConference(int id, ConferenceDto conference)
         {
+            this._logger.LogInformation("--- Début PutConference ---");
             if (id != conference.Id)
             {
+                this._logger.LogInformation("Mauvaise requête");
                 return BadRequest();
             }
 
@@ -109,6 +121,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 if (!ConferenceBdExists(id))
                 {
+                    this._logger.LogInformation(string.Format("Conférence no {0} non trouvée", id));
                     return NotFound();
                 }
                 else
@@ -124,11 +137,13 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                         byte[] innerExStacktrace =
                             Encoding.Default.GetBytes(string.IsNullOrEmpty(ex.InnerException.StackTrace) ? string.Empty : ex.InnerException.StackTrace);
                         string innerExStacktraceUtf8 = Encoding.UTF8.GetString(innerExStacktrace);
-                        return new JsonResult(new { Message = innerExMsgUtf8, StackTrace = innerExStacktraceUtf8 },
+                        this._logger.LogError(string.Format("Erreur sur la modification de la conférence, message : {0}", innerExMsgUtf8));
+                        return new JsonResult(new { Message = "Une erreur est survenue, veuillez contacter le soutien technique." },
                                               mesDefautsSerialisation);
                     }
-                    return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
-                                          mesDefautsSerialisation);
+                    
+                    this._logger.LogError(string.Format("Erreur sur la modification de la conférence, message : {0}", ex.Message));
+                    return new JsonResult(new { Message = ex.Message }, mesDefautsSerialisation);
 
                 }
             }
@@ -140,13 +155,15 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
                 if (ex.InnerException != null)
                 {
-                    return new JsonResult(new { Message = ex.InnerException.Message, StackTrace = ex.InnerException.StackTrace },
-                                          mesDefautsSerialisation);
+                    this._logger.LogError(string.Format("Erreur sur la modification de la conférence, message : {0}", ex.InnerException.Message));
+                    return new JsonResult(new { Message = ex.InnerException.Message }, mesDefautsSerialisation);
                 }
-                return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
-                                      mesDefautsSerialisation);
+
+                this._logger.LogError(string.Format("Erreur sur la modification de la conférence, message : {0}", ex.Message));
+                return new JsonResult(new { Message = ex.Message }, mesDefautsSerialisation);
             }
 
+            this._logger.LogInformation("--- Fin PutConference ---");
             return NoContent();
         }
 
@@ -155,6 +172,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPost]
         public async Task<ActionResult<ConferenceDto>> PostConferenceDto(ConferenceDto conference)
         {
+            this._logger.LogInformation("--- Début PostConferenceDto ---");
+
             var conferenceBd = new ConferenceBd
             {
                 Id = conference.Id,
@@ -178,13 +197,15 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
                 if (ex.InnerException != null)
                 {
-                    return new JsonResult(new { Message = ex.InnerException.Message, StackTrace = ex.InnerException.StackTrace },
-                                          mesDefautsSerialisation);
+                    this._logger.LogError(string.Format("Erreur à la création d'une conférence, erreur : {0}", ex.InnerException.Message));
+                    return new JsonResult(new { Message = ex.InnerException.Message }, mesDefautsSerialisation);
                 }
-                return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
-                                      mesDefautsSerialisation);
+
+                this._logger.LogError(string.Format("Erreur à la création d'une conférence, erreur : {0}", ex.Message));
+                return new JsonResult(new { Message = ex.Message }, mesDefautsSerialisation);
             }
 
+            this._logger.LogInformation("--- Fin PostConferenceDto ---");
             return CreatedAtAction("PostConferenceDto", conference);
         }
 
@@ -192,20 +213,24 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteConference(int id)
         {
+            this._logger.LogInformation("--- Début DeleteConference ---");
             var conferenceBd = await _context.conference.FindAsync(id);
             if (conferenceBd == null)
             {
+                this._logger.LogError("Conférence non trouvée");
                 return NotFound();
             }
 
             _context.conference.Remove(conferenceBd);
             await _context.SaveChangesAsync();
 
+            this._logger.LogInformation("--- Fin DeleteConference ---");
             return NoContent();
         }
 
         private bool ConferenceBdExists(int id)
         {
+            this._logger.LogInformation("On passe dans ConferenceBdExists");
             return _context.conference.Any(e => e.Id == id);
         }
     }
