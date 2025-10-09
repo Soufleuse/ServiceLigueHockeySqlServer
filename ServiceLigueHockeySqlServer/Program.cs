@@ -24,8 +24,14 @@ namespace ServiceLigueHockerSqlServer
             {
                 configuration
                     .ReadFrom.Configuration(context.Configuration)
-                    .Enrich.FromLogContext()
-                    .Enrich.WithProperty("Application", "ServiceLigueHockeySqlServer");
+                    .WriteTo.MSSqlServer(
+                        connectionString: context.Configuration.GetConnectionString("sqlServerConnection"),
+                        sinkOptions: new Serilog.Sinks.MSSqlServer.MSSqlServerSinkOptions
+                        {
+                            TableName = "TraceApplicative",
+                            AutoCreateSqlTable = false
+                        }
+                    );
             });
 
             // Add services to the container.
@@ -89,6 +95,31 @@ namespace ServiceLigueHockerSqlServer
             {
                 var context = scope.ServiceProvider.GetRequiredService<ServiceLigueHockeyContext>();
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+                // Créer la table de logs si elle n'existe pas
+                try
+                {
+                    var createTableSql = @"
+                    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'TraceApplicative')
+                    BEGIN
+                        CREATE TABLE TraceApplicative (
+                            Id INT IDENTITY(1,1) PRIMARY KEY,
+                            Message nvarchar(4000),
+                            MessageTemplate nvarchar(4000),
+                            Level nvarchar(100),
+                            TimeStamp datetime2 NOT NULL,
+                            Exception nvarchar(4000),
+                            Properties nvarchar(4000)
+                        );
+                    END";
+                    
+                    context.Database.ExecuteSqlRaw(createTableSql);
+                    logger.LogInformation("Table TraceApplicative vérifiée/créée");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning($"Erreur lors de la création de TraceApplicative: {ex.Message}");
+                }
 
                 var retryCount = 0;
                 var maxRetries = 10;
