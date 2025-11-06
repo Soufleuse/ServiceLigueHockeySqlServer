@@ -368,4 +368,3 @@ MigrationBackup/
 appsettings*.json
 !appsettings.template.json
 messecrets.json
-Migrations/
