@@ -12,8 +12,8 @@ using ServiceLigueHockeySqlServer.Data;
 namespace ServiceLigueHockeySqlServer.Migrations
 {
     [DbContext(typeof(ServiceLigueHockeyContext))]
-    [Migration("20250904170708_Initial")]
-    partial class Initial
+    [Migration("20250930130824_MigrationInitiale")]
+    partial class MigrationInitiale
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -166,6 +166,106 @@ namespace ServiceLigueHockeySqlServer.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.ConferenceBd", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AnneeDebut")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AnneeFin")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EstDevenueConference")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NomConference")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NomConference", "AnneeDebut")
+                        .IsUnique();
+
+                    b.ToTable("Conference", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AnneeDebut = 1994,
+                            NomConference = "Est"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AnneeDebut = 1994,
+                            NomConference = "Ouest"
+                        });
+                });
+
+            modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.DivisionBd", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AnneeDebut")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AnneeFin")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ConferenceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NomDivision")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConferenceId");
+
+                    b.HasIndex("NomDivision", "AnneeDebut")
+                        .IsUnique();
+
+                    b.ToTable("Division", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AnneeDebut = 1994,
+                            ConferenceId = 1,
+                            NomDivision = "Atlantique"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AnneeDebut = 1994,
+                            ConferenceId = 1,
+                            NomDivision = "Métropolitaine"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AnneeDebut = 1994,
+                            ConferenceId = 2,
+                            NomDivision = "Centrale"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AnneeDebut = 1994,
+                            ConferenceId = 2,
+                            NomDivision = "Pacifique"
+                        });
+                });
+
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.EquipeBd", b =>
                 {
                     b.Property<int>("Id")
@@ -175,6 +275,9 @@ namespace ServiceLigueHockeySqlServer.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("AnneeFin")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DivisionId")
                         .HasColumnType("int");
 
                     b.Property<int?>("EstDevenueEquipe")
@@ -192,6 +295,8 @@ namespace ServiceLigueHockeySqlServer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DivisionId");
+
                     b.HasIndex("NomEquipe", "Ville")
                         .IsUnique();
 
@@ -202,6 +307,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
                         {
                             Id = 1,
                             AnneeDebut = 1989,
+                            DivisionId = 1,
                             NomEquipe = "Canadiensssss",
                             Ville = "Mourial"
                         },
@@ -209,6 +315,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
                         {
                             Id = 2,
                             AnneeDebut = 1984,
+                            DivisionId = 1,
                             NomEquipe = "Bruns",
                             Ville = "Albany"
                         },
@@ -216,6 +323,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
                         {
                             Id = 3,
                             AnneeDebut = 1976,
+                            DivisionId = 1,
                             NomEquipe = "Harfangs",
                             Ville = "Hartford"
                         },
@@ -223,6 +331,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
                         {
                             Id = 4,
                             AnneeDebut = 1999,
+                            DivisionId = 1,
                             NomEquipe = "Boulettes",
                             Ville = "Victoriaville"
                         },
@@ -230,6 +339,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
                         {
                             Id = 5,
                             AnneeDebut = 2001,
+                            DivisionId = 1,
                             NomEquipe = "Rocher",
                             Ville = "Percé"
                         },
@@ -237,6 +347,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
                         {
                             Id = 6,
                             AnneeDebut = 1986,
+                            DivisionId = 1,
                             NomEquipe = "Pierre",
                             Ville = "Rochester"
                         });
@@ -1054,7 +1165,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.CalendrierBd", b =>
                 {
                     b.HasOne("ServiceLigueHockeySqlServer.Data.Models.AnneeStatsBd", "zeAnnee")
-                        .WithMany("listeCalendrier")
+                        .WithMany("ListeParties")
                         .HasForeignKey("AnneeStats")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -1076,6 +1187,28 @@ namespace ServiceLigueHockeySqlServer.Migrations
                     b.Navigation("EquipeVisiteuse");
 
                     b.Navigation("zeAnnee");
+                });
+
+            modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.DivisionBd", b =>
+                {
+                    b.HasOne("ServiceLigueHockeySqlServer.Data.Models.ConferenceBd", "Conference")
+                        .WithMany("listeDivision")
+                        .HasForeignKey("ConferenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conference");
+                });
+
+            modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.EquipeBd", b =>
+                {
+                    b.HasOne("ServiceLigueHockeySqlServer.Data.Models.DivisionBd", "division")
+                        .WithMany("listeEquipeBd")
+                        .HasForeignKey("DivisionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("division");
                 });
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.EquipeJoueurBd", b =>
@@ -1178,7 +1311,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.AnneeStatsBd", b =>
                 {
-                    b.Navigation("listeCalendrier");
+                    b.Navigation("ListeParties");
                 });
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.CalendrierBd", b =>
@@ -1186,6 +1319,16 @@ namespace ServiceLigueHockeySqlServer.Migrations
                     b.Navigation("listePenalites");
 
                     b.Navigation("listePointeurs");
+                });
+
+            modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.ConferenceBd", b =>
+                {
+                    b.Navigation("listeDivision");
+                });
+
+            modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.DivisionBd", b =>
+                {
+                    b.Navigation("listeEquipeBd");
                 });
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.EquipeBd", b =>

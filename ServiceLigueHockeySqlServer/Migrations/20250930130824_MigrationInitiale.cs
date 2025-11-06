@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ServiceLigueHockeySqlServer.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class MigrationInitiale : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,19 +27,18 @@ namespace ServiceLigueHockeySqlServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Equipe",
+                name: "Conference",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    NomEquipe = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Ville = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    NomConference = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     AnneeDebut = table.Column<int>(type: "int", nullable: false),
                     AnneeFin = table.Column<int>(type: "int", nullable: true),
-                    EstDevenueEquipe = table.Column<int>(type: "int", nullable: true)
+                    EstDevenueConference = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Equipe", x => x.Id);
+                    table.PrimaryKey("PK_Conference", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -86,6 +85,50 @@ namespace ServiceLigueHockeySqlServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Division",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    NomDivision = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    AnneeDebut = table.Column<int>(type: "int", nullable: false),
+                    AnneeFin = table.Column<int>(type: "int", nullable: true),
+                    ConferenceId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Division", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Division_Conference_ConferenceId",
+                        column: x => x.ConferenceId,
+                        principalTable: "Conference",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Equipe",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    NomEquipe = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Ville = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    AnneeDebut = table.Column<int>(type: "int", nullable: false),
+                    AnneeFin = table.Column<int>(type: "int", nullable: true),
+                    EstDevenueEquipe = table.Column<int>(type: "int", nullable: true),
+                    DivisionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Equipe", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Equipe_Division_DivisionId",
+                        column: x => x.DivisionId,
+                        principalTable: "Division",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Calendrier",
                 columns: table => new
                 {
@@ -124,30 +167,6 @@ namespace ServiceLigueHockeySqlServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StatsEquipe",
-                columns: table => new
-                {
-                    AnneeStats = table.Column<short>(type: "smallint", nullable: false),
-                    EquipeId = table.Column<int>(type: "int", nullable: false),
-                    NbPartiesJouees = table.Column<short>(type: "smallint", nullable: false),
-                    NbVictoires = table.Column<short>(type: "smallint", nullable: false),
-                    NbDefaites = table.Column<short>(type: "smallint", nullable: false),
-                    NbDefProlo = table.Column<short>(type: "smallint", nullable: false),
-                    NbButsPour = table.Column<short>(type: "smallint", nullable: false),
-                    NbButsContre = table.Column<short>(type: "smallint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StatsEquipe", x => new { x.EquipeId, x.AnneeStats });
-                    table.ForeignKey(
-                        name: "FK_StatsEquipe_Equipe_EquipeId",
-                        column: x => x.EquipeId,
-                        principalTable: "Equipe",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "EquipeJoueur",
                 columns: table => new
                 {
@@ -172,6 +191,30 @@ namespace ServiceLigueHockeySqlServer.Migrations
                         column: x => x.JoueurId,
                         principalTable: "Joueur",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StatsEquipe",
+                columns: table => new
+                {
+                    AnneeStats = table.Column<short>(type: "smallint", nullable: false),
+                    EquipeId = table.Column<int>(type: "int", nullable: false),
+                    NbPartiesJouees = table.Column<short>(type: "smallint", nullable: false),
+                    NbVictoires = table.Column<short>(type: "smallint", nullable: false),
+                    NbDefaites = table.Column<short>(type: "smallint", nullable: false),
+                    NbDefProlo = table.Column<short>(type: "smallint", nullable: false),
+                    NbButsPour = table.Column<short>(type: "smallint", nullable: false),
+                    NbButsContre = table.Column<short>(type: "smallint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StatsEquipe", x => new { x.EquipeId, x.AnneeStats });
+                    table.ForeignKey(
+                        name: "FK_StatsEquipe_Equipe_EquipeId",
+                        column: x => x.EquipeId,
+                        principalTable: "Equipe",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -297,16 +340,12 @@ namespace ServiceLigueHockeySqlServer.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Equipe",
-                columns: new[] { "Id", "AnneeDebut", "AnneeFin", "EstDevenueEquipe", "NomEquipe", "Ville" },
+                table: "Conference",
+                columns: new[] { "Id", "AnneeDebut", "AnneeFin", "EstDevenueConference", "NomConference" },
                 values: new object[,]
                 {
-                    { 1, 1989, null, null, "Canadiensssss", "Mourial" },
-                    { 2, 1984, null, null, "Bruns", "Albany" },
-                    { 3, 1976, null, null, "Harfangs", "Hartford" },
-                    { 4, 1999, null, null, "Boulettes", "Victoriaville" },
-                    { 5, 2001, null, null, "Rocher", "Percé" },
-                    { 6, 1986, null, null, "Pierre", "Rochester" }
+                    { 1, 1994, null, null, "Est" },
+                    { 2, 1994, null, null, "Ouest" }
                 });
 
             migrationBuilder.InsertData(
@@ -353,6 +392,30 @@ namespace ServiceLigueHockeySqlServer.Migrations
                     { (short)1, "Mineure", 2 },
                     { (short)2, "Majeure", 5 },
                     { (short)3, "Inconduite de partie", 10 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Division",
+                columns: new[] { "Id", "AnneeDebut", "AnneeFin", "ConferenceId", "NomDivision" },
+                values: new object[,]
+                {
+                    { 1, 1994, null, 1, "Atlantique" },
+                    { 2, 1994, null, 1, "Métropolitaine" },
+                    { 3, 1994, null, 2, "Centrale" },
+                    { 4, 1994, null, 2, "Pacifique" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Equipe",
+                columns: new[] { "Id", "AnneeDebut", "AnneeFin", "DivisionId", "EstDevenueEquipe", "NomEquipe", "Ville" },
+                values: new object[,]
+                {
+                    { 1, 1989, null, 1, null, "Canadiensssss", "Mourial" },
+                    { 2, 1984, null, 1, null, "Bruns", "Albany" },
+                    { 3, 1976, null, 1, null, "Harfangs", "Hartford" },
+                    { 4, 1999, null, 1, null, "Boulettes", "Victoriaville" },
+                    { 5, 2001, null, 1, null, "Rocher", "Percé" },
+                    { 6, 1986, null, 1, null, "Pierre", "Rochester" }
                 });
 
             migrationBuilder.InsertData(
@@ -419,6 +482,28 @@ namespace ServiceLigueHockeySqlServer.Migrations
                 name: "IX_Calendrier_IdEquipeVisiteuse",
                 table: "Calendrier",
                 column: "IdEquipeVisiteuse");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Conference_NomConference_AnneeDebut",
+                table: "Conference",
+                columns: new[] { "NomConference", "AnneeDebut" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Division_ConferenceId",
+                table: "Division",
+                column: "ConferenceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Division_NomDivision_AnneeDebut",
+                table: "Division",
+                columns: new[] { "NomDivision", "AnneeDebut" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Equipe_DivisionId",
+                table: "Equipe",
+                column: "DivisionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Equipe_NomEquipe_Ville",
@@ -501,6 +586,12 @@ namespace ServiceLigueHockeySqlServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Equipe");
+
+            migrationBuilder.DropTable(
+                name: "Division");
+
+            migrationBuilder.DropTable(
+                name: "Conference");
         }
     }
 }

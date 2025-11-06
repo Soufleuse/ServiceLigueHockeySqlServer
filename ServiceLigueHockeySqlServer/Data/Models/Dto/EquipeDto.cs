@@ -19,6 +19,8 @@ namespace ServiceLigueHockeySqlServer.Data.Models.Dto
         public Int32? AnneeFin { get; set; }
 
         public int? EstDevenueEquipe { get; set; }
+        
+        public int DivisionId { get; set; } = default!;
 
         //public virtual ICollection<EquipeJoueurBd> listeEquipeJoueur { get; set; } = default!;
     }

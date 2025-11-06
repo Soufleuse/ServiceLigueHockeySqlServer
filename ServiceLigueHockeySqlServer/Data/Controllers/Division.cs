@@ -16,16 +16,19 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
     public class Division : ControllerBase
     {
         private readonly ServiceLigueHockeyContext _context;
+        private readonly ILogger<Division> _logger;
 
-        public Division(ServiceLigueHockeyContext context)
+        public Division(ServiceLigueHockeyContext context, ILogger<Division> logger)
         {
             _context = context;
+            this._logger = logger;
         }
 
         // GET: api/Division/prochainid
         [HttpGet("prochainid")]
         public ActionResult<int> GetProchainIdDivision()
         {
+            this._logger.LogInformation("--- Début GetProchainIdDivision ---");
             var listeDivision = (from division in _context.division
                                  select division)
                                  .OrderByDescending(x => x.Id)
@@ -37,6 +40,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 retour = listeDivision.Id + 1;
             }
 
+            this._logger.LogInformation("--- Fin GetProchainIdDivision ---");
             return Ok(retour);
         }
 
@@ -44,6 +48,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet]
         public ActionResult<IQueryable<DivisionDto>> GetDivisionDto()
         {
+            this._logger.LogInformation("--- Début GetDivisionDto ---");
+
             var listeEquipe = from division in _context.division
                               select new DivisionDto
                               {
@@ -61,6 +67,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                       EstDevenueConference = division.Conference.EstDevenueConference
                                   }
                               };
+
+            this._logger.LogInformation("--- Fin GetDivisionDto ---");
             return Ok(listeEquipe);
         }
 
@@ -68,10 +76,12 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DivisionDto>> GetDivisionDto(int id)
         {
+            this._logger.LogInformation("--- Début GetDivisionDto ---");
             var divisionBd = await _context.division.FindAsync(id);
 
             if (divisionBd == null)
             {
+                this._logger.LogError("Division non-trouvée");
                 return NotFound();
             }
 
@@ -92,6 +102,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 }
             };
 
+            this._logger.LogInformation("--- Fin GetDivisionDto ---");
             return Ok(divisionDto);
         }
 
@@ -100,8 +111,10 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDivision(int id, DivisionDto division)
         {
+            this._logger.LogInformation("--- Début PutDivision ---");
             if (id != division.Id)
             {
+                this._logger.LogError("Mauvaise requête");
                 return BadRequest();
             }
 
@@ -124,6 +137,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 if (!DivisionBdExists(id))
                 {
+                    this._logger.LogError("Non trouvé");
                     return NotFound();
                 }
                 else
@@ -139,11 +153,13 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                         byte[] innerExStacktrace =
                             Encoding.Default.GetBytes(string.IsNullOrEmpty(ex.InnerException.StackTrace) ? string.Empty : ex.InnerException.StackTrace);
                         string innerExStacktraceUtf8 = Encoding.UTF8.GetString(innerExStacktrace);
-                        return new JsonResult(new { Message = innerExMsgUtf8, StackTrace = innerExStacktraceUtf8 },
-                                              mesDefautsSerialisation);
+
+                        this._logger.LogError(string.Format("Erreur : {0}", innerExMsgUtf8));
+                        return new JsonResult(new { Message = innerExMsgUtf8 }, mesDefautsSerialisation);
                     }
-                    return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
-                                          mesDefautsSerialisation);
+
+                    this._logger.LogError(string.Format("Erreur : {0}", ex.Message));
+                    return new JsonResult(new { Message = ex.Message }, mesDefautsSerialisation);
 
                 }
             }
@@ -155,13 +171,16 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
                 if (ex.InnerException != null)
                 {
-                    return new JsonResult(new { Message = ex.InnerException.Message, StackTrace = ex.InnerException.StackTrace },
+                    this._logger.LogError(string.Format("Erreur : {0}", ex.InnerException.Message));
+                    return new JsonResult(new { Message = ex.InnerException.Message },
                                           mesDefautsSerialisation);
                 }
-                return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
-                                      mesDefautsSerialisation);
+
+                this._logger.LogError(string.Format("Erreur : {0}", ex.Message));
+                return new JsonResult(new { Message = ex.Message }, mesDefautsSerialisation);
             }
 
+            this._logger.LogInformation("--- Fin PutDivision ---");
             return NoContent();
         }
 
@@ -170,6 +189,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPost]
         public async Task<ActionResult<DivisionDto>> PostDivisionDto(DivisionDto division)
         {
+            this._logger.LogInformation("--- Début PostDivisionDto ---");
+
             var divisionBd = new DivisionBd
             {
                 Id = division.Id,
@@ -194,13 +215,15 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
                 if (ex.InnerException != null)
                 {
-                    return new JsonResult(new { Message = ex.InnerException.Message, StackTrace = ex.InnerException.StackTrace },
-                                          mesDefautsSerialisation);
+                    this._logger.LogError(string.Format("Erreur : {0}", ex.InnerException.Message));
+                    return new JsonResult(new { Message = ex.InnerException.Message }, mesDefautsSerialisation);
                 }
-                return new JsonResult(new { Message = ex.Message, StackTrace = ex.StackTrace },
-                                      mesDefautsSerialisation);
+                
+                this._logger.LogError(string.Format("Erreur : {0}", ex.Message));
+                return new JsonResult(new { Message = ex.Message }, mesDefautsSerialisation);
             }
 
+            this._logger.LogInformation("--- Fin PostDivisionDto ---");
             return CreatedAtAction("PostDivisionDto", division);
         }
 
@@ -208,6 +231,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDivision(int id)
         {
+            this._logger.LogInformation("--- Début DeleteDivision ---");
+
             var divisionBd = await _context.division.FindAsync(id);
             if (divisionBd == null)
             {
@@ -216,12 +241,14 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
             _context.division.Remove(divisionBd);
             await _context.SaveChangesAsync();
+            this._logger.LogInformation("--- Fin DeleteDivision ---");
 
             return NoContent();
         }
 
         private bool DivisionBdExists(int id)
         {
+            this._logger.LogInformation("On passe dans DivisionBdExists.");
             return _context.division.Any(e => e.Id == id);
         }
     }

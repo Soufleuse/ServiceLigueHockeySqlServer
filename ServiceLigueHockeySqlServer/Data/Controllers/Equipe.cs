@@ -58,7 +58,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                   Ville = equipe.Ville,
                                   AnneeDebut = equipe.AnneeDebut,
                                   AnneeFin = equipe.AnneeFin,
-                                  EstDevenueEquipe = equipe.EstDevenueEquipe
+                                  EstDevenueEquipe = equipe.EstDevenueEquipe,
+                                  DivisionId = equipe.DivisionId
                               };
 
             _logger.LogInformation("--- Fin GetEquipeDto ---");
@@ -85,7 +86,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 Ville = equipeBd.Ville,
                 AnneeDebut = equipeBd.AnneeDebut,
                 AnneeFin = equipeBd.AnneeFin,
-                EstDevenueEquipe = equipeBd.EstDevenueEquipe
+                EstDevenueEquipe = equipeBd.EstDevenueEquipe,
+                DivisionId = equipeBd.DivisionId
             };
 
             this._logger.LogInformation("--- Fin GetEquipeDto ---");
@@ -131,7 +133,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 Ville = equipeDto.Ville,
                 AnneeDebut = equipeDto.AnneeDebut,
                 AnneeFin = equipeDto.AnneeFin,
-                EstDevenueEquipe = equipeDto.EstDevenueEquipe
+                EstDevenueEquipe = equipeDto.EstDevenueEquipe,
+                DivisionId = equipeDto.DivisionId
             };
 
             _context.Entry(equipeBd).State = EntityState.Modified;
@@ -212,7 +215,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 Ville = equipe.Ville,
                 AnneeDebut = equipe.AnneeDebut,
                 AnneeFin = equipe.AnneeFin,
-                EstDevenueEquipe = equipe.EstDevenueEquipe
+                EstDevenueEquipe = equipe.EstDevenueEquipe,
+                DivisionId = equipe.DivisionId
             };
 
             try

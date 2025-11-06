@@ -24,8 +24,14 @@ namespace ServiceLigueHockerSqlServer
             {
                 configuration
                     .ReadFrom.Configuration(context.Configuration)
-                    .Enrich.FromLogContext()
-                    .Enrich.WithProperty("Application", "ServiceLigueHockeySqlServer");
+                    .WriteTo.MSSqlServer(
+                        connectionString: context.Configuration.GetConnectionString("sqlServerConnection"),
+                        sinkOptions: new Serilog.Sinks.MSSqlServer.MSSqlServerSinkOptions
+                        {
+                            TableName = "TraceApplicative",
+                            AutoCreateSqlTable = false
+                        }
+                    );
             });
 
             // Add services to the container.
@@ -34,25 +40,13 @@ namespace ServiceLigueHockerSqlServer
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // D�but d�commenter pour d�ployer sur Ubuntu Server
-            // Laisser comment� pour tester en debug
-            /*builder.WebHost.ConfigureKestrel(serverOption =>
-            {
-                serverOption.Listen(IPAddress.Parse("10.0.0.5"), 5000);
-                serverOption.Listen(IPAddress.Parse("127.0.0.1"), 5000);
-            });*/
-            // Fin d�commenter pour d�ployer sur Ubuntu Server
-
             builder.Services.AddDbContext<ServiceLigueHockeyContext>(options => {
-                //var connectionString =  builder.Configuration.GetConnectionString("mysqlConnection");
                 var connectionString = builder.Configuration.GetConnectionString("sqlServerConnection");
-                //var connectionString = builder.Configuration.GetConnectionString("winServer2022Connection");
                 if (string.IsNullOrEmpty(connectionString))
                 {
                     throw new System.Exception("La chaine de connexion est vide.");
                 }
 
-                //options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 30)));
                 options.UseSqlServer(connectionString);
             });
 
@@ -63,20 +57,10 @@ namespace ServiceLigueHockerSqlServer
                     {
                         Func<string, bool> isMonOrigineAllowed = str => { return true; };
                         builder.AllowAnyHeader()
-                            .AllowAnyMethod()
-                            .WithOrigins("http://localhost:12080", "https://localhost:12080", "http://127.0.0.1:12080", "https://127.0.0.1:12080",
+                               .AllowAnyMethod()
+                               .WithOrigins("http://localhost:12080", "https://localhost:12080", "http://127.0.0.1:12080", "https://127.0.0.1:12080",
                                             "http://localhost:12081", "https://localhost:12081", "http://127.0.0.1:12081", "https://127.0.0.1:12081");
-                        //.SetIsOriginAllowed(isMonOrigineAllowed)
-                        //.AllowCredentials()
-                        //builder.WithOrigins("http://localhost:4900", "https://localhost:4900", "https://localhost:7166", "https://127.0.0.1:4900");
-                        //builder.WithHeaders("Content-Type");
-                        //builder.WithMethods("*");
-                        //builder.WithMethods("POST","GET","PUT","OPTIONS");
                     });
-
-                /*options.AddDefaultPolicy(builder => {
-                    builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
-                });*/
             });
 
             var app = builder.Build();
@@ -111,6 +95,31 @@ namespace ServiceLigueHockerSqlServer
             {
                 var context = scope.ServiceProvider.GetRequiredService<ServiceLigueHockeyContext>();
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+                // Créer la table de logs si elle n'existe pas
+                try
+                {
+                    var createTableSql = @"
+                    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'TraceApplicative')
+                    BEGIN
+                        CREATE TABLE TraceApplicative (
+                            Id INT IDENTITY(1,1) PRIMARY KEY,
+                            Message nvarchar(4000),
+                            MessageTemplate nvarchar(4000),
+                            Level nvarchar(100),
+                            TimeStamp datetime2 NOT NULL,
+                            Exception nvarchar(4000),
+                            Properties nvarchar(4000)
+                        );
+                    END";
+                    
+                    context.Database.ExecuteSqlRaw(createTableSql);
+                    logger.LogInformation("Table TraceApplicative vérifiée/créée");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning($"Erreur lors de la création de TraceApplicative: {ex.Message}");
+                }
 
                 var retryCount = 0;
                 var maxRetries = 10;
