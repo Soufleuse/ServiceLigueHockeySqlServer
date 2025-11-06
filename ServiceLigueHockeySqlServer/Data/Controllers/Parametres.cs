@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ServiceLigueHockeySqlServer.Data.Models;
@@ -17,16 +14,19 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
     public class Parametres : ControllerBase
     {
         private readonly ServiceLigueHockeyContext _context;
+        private readonly ILogger<Parametres> _logger;
 
-        public Parametres(ServiceLigueHockeyContext context)
+        public Parametres(ServiceLigueHockeyContext context, ILogger<Parametres> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Parametres
         [HttpGet]
         public ActionResult<IQueryable<ParametresDto>> GetParametresBd()
         {
+            this._logger.LogInformation("--- Début GetParametresBd ---");
             var listeParametres = from parametre in _context.parametres
                                   select new ParametresDto
                                   {
@@ -36,6 +36,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                       dateFin = parametre.dateFin
                                   };
 
+            this._logger.LogInformation("--- Fin GetParametresBd ---");
             return Ok(listeParametres);
         }
 
@@ -43,6 +44,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("{nom}")]
         public ActionResult<IQueryable<JoueurDto>> GetParametresBd(string nom)
         {
+            this._logger.LogInformation("--- Début GetParametresBd avec nom ---");
             var listeParametres = from parametre in _context.parametres
                                   where string.Compare(nom, parametre.nom) == 0
                                   select new ParametresDto
@@ -53,6 +55,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                                       dateFin = parametre.dateFin
                                   };
                                   
+            this._logger.LogInformation("--- Fin GetParametresBd avec nom ---");
             return Ok(listeParametres);
         }
 
@@ -60,6 +63,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("{nom}/{datevalidite}")]
         public async Task<ActionResult<List<ParametresDto>>> GetParametresBd(string nom, DateTime datevalidite)
         {
+            this._logger.LogInformation("--- Début GetParametresBd avec nom et datevalidite ---");
+
             var parametresBd = await _context.parametres
                 .Where(x => string.Compare(x.nom, nom) == 0 &&
                        x.dateDebut <= datevalidite && (!x.dateFin.HasValue || x.dateFin.HasValue && x.dateFin >= datevalidite))
@@ -67,6 +72,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
             if (parametresBd == null)
             {
+                this._logger.LogInformation("Paramètre non-trouvé");
                 return NotFound();
             }
 
@@ -82,6 +88,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 retour.Add(ajout);
             });
 
+            this._logger.LogInformation("--- Fin GetParametresBd avec nom et datevalidite ---");
             return Ok(retour);
         }
 
@@ -90,8 +97,11 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPut("{nom}/{datedebut}")]
         public async Task<IActionResult> PutJoueurBd(string nom, DateTime datedebut, ParametresBd parametreBd)
         {
+            this._logger.LogInformation("--- Début PutJoueurBd ---");
+
             if (string.Compare(nom, parametreBd.nom) != 0 || datedebut != parametreBd.dateDebut)
             {
+                this._logger.LogError("Mauvaise requête");
                 return BadRequest();
             }
 
@@ -101,16 +111,22 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException dbEx)
             {
                 if (!ParametreBdExists(parametreBd.nom, parametreBd.dateDebut, parametreBd.dateFin))
                 {
+                    this._logger.LogInformation("Joueur non-trouvé");
                     return NotFound();
                 }
                 else
                 {
-                    throw;
+                    this._logger.LogError(string.Format("Erreur dans PutJoueurBd : {0}", dbEx.Message));
+                    return StatusCode(500);
                 }
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PutJoueurBd ---");
             }
 
             return NoContent();
@@ -121,6 +137,8 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPost]
         public async Task<ActionResult<ParametresDto>> PostParametreDto(ParametresDto parametre)
         {
+            this._logger.LogInformation("--- Début PostParametreDto ---");
+
             var parametresBd = new ParametresBd
             {
                 nom = parametre.nom,
@@ -130,13 +148,27 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             };
 
             _context.parametres.Add(parametresBd);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format("Erreur dans PostParametreDto : {0}", ex.Message));
+                return StatusCode(500);
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PostParametreDto ---");
+            }
 
             return CreatedAtAction("PostParametreDto", parametre);
         }
 
         private bool ParametreBdExists(string nom, DateTime datedebut, DateTime? datefin)
         {
+            this._logger.LogInformation("--- Passage dans ParametreBdExists ---");
             return _context.parametres.Any(e => e.nom == nom && e.dateDebut.Equals(datedebut) && datefin == e.dateFin);
         }
     }

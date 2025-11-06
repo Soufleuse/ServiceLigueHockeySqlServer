@@ -10,24 +10,28 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
     public class TypePenalites : ControllerBase
     {
         private readonly ServiceLigueHockeyContext _context;
+        private readonly ILogger<TypePenalites> _logger;
 
-        public TypePenalites(ServiceLigueHockeyContext context)
+        public TypePenalites(ServiceLigueHockeyContext context, ILogger<TypePenalites> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/TypePenalites
         [HttpGet]
         public ActionResult<IQueryable<TypePenalitesDto>> GetTypePenalitesDto()
         {
+            this._logger.LogInformation("--- Début GetTypePenalitesDto ---");
             var listeTypePenalites = from monTypePenalites in _context.typePenalites
-                              select new TypePenalitesDto
-                              {
-                                IdTypePenalite = monTypePenalites.IdTypePenalite,
-                                NbreMinutesPenalitesPourCetteInfraction = monTypePenalites.NbreMinutesPenalitesPourCetteInfraction,
-                                DescriptionPenalite = monTypePenalites.DescriptionPenalite
-                              };
+                                     select new TypePenalitesDto
+                                     {
+                                         IdTypePenalite = monTypePenalites.IdTypePenalite,
+                                         NbreMinutesPenalitesPourCetteInfraction = monTypePenalites.NbreMinutesPenalitesPourCetteInfraction,
+                                         DescriptionPenalite = monTypePenalites.DescriptionPenalite
+                                     };
 
+            this._logger.LogInformation("--- Fin GetTypePenalitesDto ---");
             return Ok(listeTypePenalites);
         }
 
@@ -35,10 +39,12 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("{IdTypePenalite}")]
         public async Task<ActionResult<TypePenalitesDto>> GetTypePenalitesDto(short IdTypePenalite)
         {
+            this._logger.LogInformation("--- Début GetTypePenalitesDto avec IdTypePenalite ---");
             var typePenalitesBd = await _context.typePenalites.FindAsync(IdTypePenalite);
 
             if (typePenalitesBd == null)
             {
+                this._logger.LogError("Type de pénalité non-trouvée");
                 return NotFound();
             }
 
@@ -49,6 +55,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 DescriptionPenalite = typePenalitesBd.DescriptionPenalite
             };
 
+            this._logger.LogInformation("--- Fin GetTypePenalitesDto avec IdTypePenalite ---");
             return Ok(typePenalitesDto);
         }
 
@@ -57,6 +64,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPost]
         public async Task<ActionResult<TypePenalitesDto>> PostTypePenalitesBd(TypePenalitesBd typePenaliteBd)
         {
+            this._logger.LogInformation("--- Début PostTypePenalitesBd ---");
             /*var typePenaliteBd = new TypePenalitesBd
             {
                 IdTypePenalite = pTypePenalitesDto.IdTypePenalite,
@@ -70,16 +78,23 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException dbEx)
             {
                 if (TypePenalitesBdExists(typePenaliteBd.IdTypePenalite))
                 {
-                    return Conflict(ex);
+                    this._logger.LogError("Un autre item de type pénalité avec le même id existe; pénalité id {0}",
+                                          typePenaliteBd.IdTypePenalite);
+                    return Conflict(dbEx);
                 }
                 else
                 {
-                    throw;
+                    this._logger.LogError(string.Format("Erreur dans PostTypePenalitesBd : {0}", dbEx.Message));
+                    return StatusCode(500);
                 }
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PostTypePenalitesBd ---");
             }
 
             return CreatedAtAction("PostTypePenalitesBd", typePenaliteBd);
@@ -88,10 +103,12 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         // PUT: api/TypePenalites/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{IdTypePenalite}")]
-        public async Task<IActionResult> PutAnneeStats(short IdTypePenalite, TypePenalitesDto pTypePenalitesDto) {
-            
+        public async Task<IActionResult> PutAnneeStats(short IdTypePenalite, TypePenalitesDto pTypePenalitesDto)
+        {
+            this._logger.LogInformation("--- Début PutAnneeStats ---");
             if (IdTypePenalite != pTypePenalitesDto.IdTypePenalite)
             {
+                this._logger.LogError("Mauvaise requête");
                 return BadRequest();
             }
 
@@ -108,16 +125,22 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException dbEx)
             {
                 if (!TypePenalitesBdExists(IdTypePenalite))
                 {
+                    this._logger.LogError("Type pénalité non-trouvé");
                     return NotFound();
                 }
                 else
                 {
-                    throw;
+                    this._logger.LogError(string.Format("Erreur dans PutAnneeStats : {0}", dbEx.Message));
+                    return StatusCode(500);
                 }
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PutAnneeStats ---");
             }
 
             return NoContent();
@@ -127,20 +150,36 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpDelete("{IdTypePenalite}")]
         public async Task<IActionResult> DeleteTypePenalitesBd(short IdTypePenalite)
         {
+            this._logger.LogInformation("--- Début DeleteTypePenalitesBd ---");
             var typePenalitesBd = await _context.typePenalites.FindAsync(IdTypePenalite);
             if (typePenalitesBd == null)
             {
+                this._logger.LogError("TypePenalites non-trouvée");
                 return NotFound();
             }
 
             _context.typePenalites.Remove(typePenalitesBd);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format("Erreur dans DeleteTypePenalitesBd {0}", ex.Message));
+                return StatusCode(500);
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin DeleteTypePenalitesBd ---");
+            }
 
             return NoContent();
         }
 
         private bool TypePenalitesBdExists(short id)
         {
+            this._logger.LogInformation("Passage dans TypePenalitesBdExists");
             return _context.typePenalites.Any(e => e.IdTypePenalite == id);
         }
     }

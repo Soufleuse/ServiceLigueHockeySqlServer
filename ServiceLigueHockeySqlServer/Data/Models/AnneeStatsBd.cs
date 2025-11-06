@@ -15,6 +15,6 @@ namespace ServiceLigueHockeySqlServer.Data.Models {
         [MaxLength(200)]
         public string DescnLongue { get; set; } = string.Empty;
 
-        public virtual ICollection<CalendrierBd> listeCalendrier { get; set; } = default!;
+        public virtual ICollection<CalendrierBd> ListeParties { get; set; } = default!;
     }
 }

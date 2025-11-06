@@ -10,6 +10,6 @@ namespace ServiceLigueHockeySqlServer.Data.Models.Dto {
 
         public string DescnLongue { get; set; } = string.Empty;
 
-        //public virtual ICollection<CalendrierDto> listeCalendrier { get; set; } = default!;
+        //public virtual ICollection<CalendrierDto> ListeParties { get; set; } = default!;
     }
 }

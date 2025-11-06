@@ -11,20 +11,28 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
     public class Penalite : ControllerBase
     {
         private readonly ServiceLigueHockeyContext _context;
+        private readonly ILogger<Penalite> _logger;
 
-        public Penalite(ServiceLigueHockeyContext context)
+        public Penalite(ServiceLigueHockeyContext context, ILogger<Penalite> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Penalite
         [HttpGet]
         public ActionResult<IQueryable<PenalitesDto>> GetPenaliteDto()
         {
+            this._logger.LogInformation("--- Début GetPenaliteDto ---");
             var listePenalites = from monPenalites in _context.penalites
-                              select new PenalitesDto
-                              {
-                              };
+                                 select new PenalitesDto
+                                 {
+                                     IdJoueurPenalise = monPenalites.IdJoueurPenalise,
+                                     IdPartie = monPenalites.IdPartie,
+                                     MomentDelaPenalite = monPenalites.MomentDelaPenalite
+                                 };
+
+            this._logger.LogInformation("--- Fin GetPenaliteDto ---");
             return Ok(listePenalites);
         }
 
@@ -32,17 +40,23 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpGet("{idPartie}")]
         public async Task<ActionResult<PenalitesDto>> GetPenalitesDto(int idPartie)
         {
+            this._logger.LogInformation("--- Début GetPenalitesDto ---");
             var penalitesBd = await _context.penalites.FindAsync(idPartie);
 
             if (penalitesBd == null)
             {
+                this._logger.LogError("Pénalité non-trouvée");
                 return NotFound();
             }
 
             var penalitesDto = new PenalitesDto
             {
+                IdJoueurPenalise = penalitesBd.IdJoueurPenalise,
+                IdPartie = penalitesBd.IdPartie,
+                MomentDelaPenalite = penalitesBd.MomentDelaPenalite
             };
 
+            this._logger.LogInformation("--- Fin GetPenalitesDto ---");
             return Ok(penalitesDto);
         }
 
@@ -51,13 +65,19 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPut("{idPartie}/{tempsPenalite}")]
         public async Task<IActionResult> PutPenalites(int idPartie, DateTime tempsPenalite, PenalitesDto penalites)
         {
+            this._logger.LogInformation("--- Début PutPenalites ---");
+
             if (idPartie != penalites.IdPartie || tempsPenalite.CompareTo(penalites.MomentDelaPenalite) != 0)
             {
+                this._logger.LogError("Mauvaise requête");
                 return BadRequest();
             }
 
             var penalitesBd = new PenalitesBd
             {
+                IdJoueurPenalise = penalites.IdJoueurPenalise,
+                IdPartie = penalites.IdPartie,
+                MomentDelaPenalite = penalites.MomentDelaPenalite
             };
 
             _context.Entry(penalitesBd).State = EntityState.Modified;
@@ -66,16 +86,22 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException dbEx)
             {
                 if (!PenalitesBdExists(idPartie, tempsPenalite))
                 {
+                    this._logger.LogInformation("--- Pénalité non-trouvée ---");
                     return NotFound();
                 }
                 else
                 {
-                    throw;
+                    this._logger.LogError(string.Format("Erreur dans PutPenalites : {0}", dbEx.Message));
+                    return StatusCode(500);
                 }
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PutPenalites ---");
             }
 
             return NoContent();
@@ -86,12 +112,29 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         [HttpPost]
         public async Task<ActionResult<PenalitesDto>> PostPenalitesDto(PenalitesDto penalites)
         {
+            this._logger.LogInformation("PostPenalitesDto");
             var penalitesBd = new PenalitesBd
             {
+                IdJoueurPenalise = penalites.IdJoueurPenalise,
+                IdPartie = penalites.IdPartie,
+                MomentDelaPenalite = penalites.MomentDelaPenalite
             };
 
             _context.penalites.Add(penalitesBd);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format("Erreur dans PostPenalitesDto", ex.Message));
+                return StatusCode(500);
+            }
+            finally
+            {
+                this._logger.LogInformation("--- Fin PostPenalitesDto ---");
+            }
 
             return CreatedAtAction("PostPenalitesDto", penalites);
         }
@@ -114,6 +157,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
         private bool PenalitesBdExists(int idPartie, DateTime tempsPenalite)
         {
+            this._logger.LogInformation("Passage dans PenalitesBdExists");
             return _context.penalites.Any(e => e.IdPartie == idPartie && e.MomentDelaPenalite.Equals(tempsPenalite));
         }
     }
