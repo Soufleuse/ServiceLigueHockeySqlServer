@@ -20,40 +20,83 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             _logger = logger;
         }
 
-        // GET: api/Calendrier
-        [HttpGet]
-        public ActionResult<IQueryable<CalendrierDto>> GetCalendrierDto()
+        // GET: api/Calendrier/2005
+        [HttpGet("parannee/{AnneeStats}")]
+        public ActionResult<IEnumerable<CalendrierDto>> GetCalendrierParAnnee(int AnneeStats)
         {
-            this._logger.LogInformation("--- GetCalendrierDto ---");
+            this._logger.LogInformation("--- Début GetCalendrierDto ---");
 
-            var ListeParties = from monCalendrier in _context.calendriers
+            if(AnneeStats < 1850 || AnneeStats > DateTime.Now.Year + 1)
+            {
+                return BadRequest();
+            }
 
-                              select new CalendrierDto
-                              {
-                                IdPartie = monCalendrier.IdPartie,
-                                IdEquipeHote = monCalendrier.IdEquipeHote,
-                                IdEquipeVisiteuse = monCalendrier.IdEquipeVisiteuse,
-                                AnneeStats = monCalendrier.AnneeStats,
-                                DatePartieJouee = monCalendrier.DatePartieJouee,
-                                NbreButsComptesParHote = monCalendrier.NbreButsComptesParHote,
-                                NbreButsComptesParVisiteur = monCalendrier.NbreButsComptesParVisiteur,
-                                AFiniEnProlongation = monCalendrier.AFiniEnProlongation,
-                                AFiniEnTirDeBarrage = monCalendrier.AFiniEnTirDeBarrage,
-                                EstUnePartieDeSerie = monCalendrier.EstUnePartieDeSerie,
-                                EstUnePartiePresaison=monCalendrier.EstUnePartiePresaison,
-                                EstUnePartieSaisonReguliere = monCalendrier.EstUnePartieSaisonReguliere,
-                                SommairePartie = monCalendrier.SommairePartie
-                              };
+            var ListeParties = (from monCalendrier in _context.calendriers
+                                where monCalendrier.AnneeStats.Equals(AnneeStats)
+                                select new CalendrierDto
+                                {
+                                  IdPartie = monCalendrier.IdPartie,
+                                  IdEquipeHote = monCalendrier.IdEquipeHote,
+                                  IdEquipeVisiteuse = monCalendrier.IdEquipeVisiteuse,
+                                  AnneeStats = monCalendrier.AnneeStats,
+                                  DatePartieJouee = monCalendrier.DatePartieJouee,
+                                  NbreButsComptesParHote = monCalendrier.NbreButsComptesParHote,
+                                  NbreButsComptesParVisiteur = monCalendrier.NbreButsComptesParVisiteur,
+                                  AFiniEnProlongation = monCalendrier.AFiniEnProlongation,
+                                  AFiniEnTirDeBarrage = monCalendrier.AFiniEnTirDeBarrage,
+                                  EstUnePartieDeSerie = monCalendrier.EstUnePartieDeSerie,
+                                  EstUnePartiePresaison = monCalendrier.EstUnePartiePresaison,
+                                  EstUnePartieSaisonReguliere = monCalendrier.EstUnePartieSaisonReguliere,
+                                  SommairePartie = monCalendrier.SommairePartie
+                                }).ToList();
+
+            this._logger.LogInformation("--- Fin GetCalendrierDto ---");
+            return Ok(ListeParties);
+        }
+        
+        // GET: api/Calendrier/2005
+        [HttpGet("parequipeetannee/{idEquipe}/{AnneeStats}")]
+        public ActionResult<IEnumerable<CalendrierDto>> GetCalendrierParEquipeEtAnnee(int idEquipe, int AnneeStats)
+        {
+            this._logger.LogInformation("--- Début GetCalendrierDto ---");
+
+            if(AnneeStats < 1850 || AnneeStats > DateTime.Now.Year + 1 || idEquipe < 1)
+            {
+                return BadRequest();
+            }
+
+            var ListeParties = _context.calendriers
+                                .Where(monCalendrier => 
+                                    monCalendrier.AnneeStats.Equals(AnneeStats) && (
+                                    monCalendrier.IdEquipeHote.Equals(idEquipe) ||
+                                    monCalendrier.IdEquipeVisiteuse.Equals(idEquipe)
+                                ))
+                                .Select(monCalendrier => new CalendrierDto
+                                {
+                                  IdPartie = monCalendrier.IdPartie,
+                                  IdEquipeHote = monCalendrier.IdEquipeHote,
+                                  IdEquipeVisiteuse = monCalendrier.IdEquipeVisiteuse,
+                                  AnneeStats = monCalendrier.AnneeStats,
+                                  DatePartieJouee = monCalendrier.DatePartieJouee,
+                                  NbreButsComptesParHote = monCalendrier.NbreButsComptesParHote,
+                                  NbreButsComptesParVisiteur = monCalendrier.NbreButsComptesParVisiteur,
+                                  AFiniEnProlongation = monCalendrier.AFiniEnProlongation,
+                                  AFiniEnTirDeBarrage = monCalendrier.AFiniEnTirDeBarrage,
+                                  EstUnePartieDeSerie = monCalendrier.EstUnePartieDeSerie,
+                                  EstUnePartiePresaison = monCalendrier.EstUnePartiePresaison,
+                                  EstUnePartieSaisonReguliere = monCalendrier.EstUnePartieSaisonReguliere,
+                                  SommairePartie = monCalendrier.SommairePartie
+                                }).ToList();
 
             this._logger.LogInformation("--- Fin GetCalendrierDto ---");
             return Ok(ListeParties);
         }
 
-        // GET: api/Calendrier/5
-        [HttpGet("{idPartie}")]
-        public async Task<ActionResult<CalendrierDto>> GetCalendrierDto(int idPartie)
+        // GET: api/Calendrier/paridpartie/5
+        [HttpGet("paridpartie/{idPartie}")]
+        public async Task<ActionResult<CalendrierDto>> GetCalendrierParidPartie(int idPartie)
         {
-            this._logger.LogInformation("--- Début GetCalendrierDto ---");
+            this._logger.LogInformation("--- Début GetCalendrierParidPartie ---");
 
             var calendrierBd = await _context.calendriers.FindAsync(idPartie);
 
@@ -108,7 +151,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 AFiniEnProlongation = calendrier.AFiniEnProlongation,
                 AFiniEnTirDeBarrage = calendrier.AFiniEnTirDeBarrage,
                 EstUnePartieDeSerie = calendrier.EstUnePartieDeSerie,
-                EstUnePartiePresaison=calendrier.EstUnePartiePresaison,
+                EstUnePartiePresaison = calendrier.EstUnePartiePresaison,
                 EstUnePartieSaisonReguliere = calendrier.EstUnePartieSaisonReguliere,
                 SommairePartie = calendrier.SommairePartie
             };
@@ -159,7 +202,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
                 AFiniEnProlongation = calendrier.AFiniEnProlongation,
                 AFiniEnTirDeBarrage = calendrier.AFiniEnTirDeBarrage,
                 EstUnePartieDeSerie = calendrier.EstUnePartieDeSerie,
-                EstUnePartiePresaison=calendrier.EstUnePartiePresaison,
+                EstUnePartiePresaison = calendrier.EstUnePartiePresaison,
                 EstUnePartieSaisonReguliere = calendrier.EstUnePartieSaisonReguliere,
                 SommairePartie = calendrier.SommairePartie
             };

@@ -1,0 +1,32 @@
+[
+  {
+    "idPartie": 2,
+    "datePartieJouee": "2024-10-15T19:00:00",
+    "anneeStats": 2024,
+    "nbreButsComptesParHote": 4,
+    "nbreButsComptesParVisiteur": 3,
+    "aFiniEnProlongation": "O",
+    "aFiniEnTirDeBarrage": null,
+    "estUnePartieDeSerie": "N",
+    "estUnePartiePresaison": "N",
+    "estUnePartieSaisonReguliere": "O",
+    "sommairePartie": "Victoire en prolongation",
+    "idEquipeHote": 1,
+    "idEquipeVisiteuse": 2
+  },
+  {
+    "idPartie": 3,
+    "datePartieJouee": "2024-10-16T19:30:00",
+    "anneeStats": 2024,
+    "nbreButsComptesParHote": 2,
+    "nbreButsComptesParVisiteur": 5,
+    "aFiniEnProlongation": null,
+    "aFiniEnTirDeBarrage": null,
+    "estUnePartieDeSerie": "N",
+    "estUnePartiePresaison": "N",
+    "estUnePartieSaisonReguliere": "O",
+    "sommairePartie": "Défaite à domicile",
+    "idEquipeHote": 3,
+    "idEquipeVisiteuse": 4
+  }
+]
