@@ -2,6 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/ImportationCalendrier/bin/Debug/net8.0/ImportationCalendrier.dll",
+            "args": ["StatsEquipe"],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
             // Utiliser IntelliSense pour déterminer quels attributs existent pour le débogage C#
             // Utiliser le pointage pour la description des attributs existants
             // Pour plus d’informations, consultez https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md.
@@ -11,7 +22,7 @@
             "preLaunchTask": "build",
             // Si vous avez modifié la version cible de .Net Framework, veillez à mettre à jour le chemin d’accès du programme.
             "program": "${workspaceFolder}/ServiceLigueHockeySqlServer/bin/Debug/net8.0/ServiceLigueHockeySqlServer.dll",
-            "args": [],
+            "args": ["StatsEquipe"],
             "cwd": "${workspaceFolder}/ServiceLigueHockeySqlServer",
             "stopAtEntry": false,
             // Activez le lancement d’un navigateur web au démarrage de ASP.NET Core. Pour plus d’informations : https://aka.ms/VSCode-CS-LaunchJson-WebBrowser

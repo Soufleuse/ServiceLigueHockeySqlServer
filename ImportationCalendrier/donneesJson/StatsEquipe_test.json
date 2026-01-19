@@ -1,0 +1,32 @@
+[
+  {
+    "anneeStats": 2024,
+    "EquipeId": 1,
+    "NbPartiesJouees": 82,
+    "NbVictoires": 65,
+    "NbDefaites": 10,
+    "NbDefProlo": 7,
+    "NbButsPour": 450,
+    "NbButsContre": 150
+  },
+  {
+    "anneeStats": 2024,
+    "EquipeId": 2,
+    "NbPartiesJouees": 82,
+    "NbVictoires": 25,
+    "NbDefaites": 45,
+    "NbDefProlo": 12,
+    "NbButsPour": 250,
+    "NbButsContre": 400
+  },
+  {
+    "anneeStats": 2024,
+    "EquipeId": 3,
+    "NbPartiesJouees": 82,
+    "NbVictoires": 33,
+    "NbDefaites": 33,
+    "NbDefProlo": 12,
+    "NbButsPour": 320,
+    "NbButsContre": 300
+  }
+]
