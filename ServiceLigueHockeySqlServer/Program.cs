@@ -58,8 +58,9 @@ namespace ServiceLigueHockerSqlServer
                         Func<string, bool> isMonOrigineAllowed = str => { return true; };
                         builder.AllowAnyHeader()
                                .AllowAnyMethod()
-                               .WithOrigins("http://localhost:12080", "https://localhost:12080", "http://127.0.0.1:12080", "https://127.0.0.1:12080",
-                                            "http://localhost:12081", "https://localhost:12081", "http://127.0.0.1:12081", "https://127.0.0.1:12081");
+                               .AllowAnyOrigin();
+                               //.WithOrigins("http://localhost:12080", "https://localhost:12080", "http://127.0.0.1:12080", "https://127.0.0.1:12080",
+                               //             "http://localhost:12081", "https://localhost:12081", "http://127.0.0.1:12081", "https://127.0.0.1:12081");
                     });
             });
 
