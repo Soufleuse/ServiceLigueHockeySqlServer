@@ -136,9 +136,11 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         {
             this._logger.LogInformation("--- Début PostJoueurDto ---");
 
+            var maxIdPlusUn = this._context.joueur.Max(monJoueur => monJoueur.Id) + 1;
+
             var joueurBd = new JoueurBd
             {
-                Id = joueur.Id,
+                Id = maxIdPlusUn,
                 Prenom = joueur.Prenom,
                 Nom = joueur.Nom,
                 DateNaissance = joueur.DateNaissance,
@@ -152,6 +154,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
             {
                 await _context.SaveChangesAsync();
                 joueur.Id = joueurBd.Id;
+                this._logger.LogInformation(string.Format("Id du joueur créé : {0}", joueur.Id));
             }
             catch (Exception ex)
             {
