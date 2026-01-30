@@ -368,3 +368,5 @@ MigrationBackup/
 ServiceLigueHockeySqlServer/appsettings*.json
 !ServiceLigueHockeySqlServer/appsettings.template.json
 messecrets.json
+Migrations/
+sqlserver-data/*

@@ -49,7 +49,7 @@ RUN echo '#!/bin/bash' > /start.sh && \
     echo 'echo "Démarrage de SQL Server..."' >> /start.sh && \
     echo '/opt/mssql/bin/sqlservr &' >> /start.sh && \
     echo 'echo "Attente du démarrage de SQL Server..."' >> /start.sh && \
-    echo 'sleep 30' >> /start.sh && \
+    echo 'sleep 60' >> /start.sh && \
     echo 'if [ ! -f "/var/opt/mssql/.db-initialized" ]; then' >> /start.sh && \
     echo '    echo "Première exécution - initialisation de la base de données..."' >> /start.sh && \
     echo '    /init-db.sh' >> /start.sh && \
@@ -59,19 +59,13 @@ RUN echo '#!/bin/bash' > /start.sh && \
     echo 'fi' >> /start.sh && \
     echo 'echo "Démarrage de l''API .NET..."' >> /start.sh && \
     echo 'cd /app' >> /start.sh && \
-    echo 'echo "Vérification des runtimes disponibles :"' >> /start.sh && \
-    echo 'dotnet --list-runtimes' >> /start.sh && \
-    echo 'echo "Vérification des fichiers de l''application :"' >> /start.sh && \
-    echo 'ls -la' >> /start.sh && \
-    echo 'echo "Contenu du fichier .runtimeconfig.json :"' >> /start.sh && \
-    echo 'cat *.runtimeconfig.json 2>/dev/null || echo "Fichier .runtimeconfig.json non trouve"' >> /start.sh && \
     echo 'echo "\nTentative de démarrage de l''application..."' >> /start.sh && \
     echo 'dotnet ServiceLigueHockeySqlServer.dll &' >> /start.sh && \
     echo 'wait' >> /start.sh && \
     chmod +x /start.sh
 
 # Exposer les ports
-EXPOSE 1433 5246
+EXPOSE 1433 5245
 
 # Créer le point de montage pour la persistance des données
 VOLUME ["/var/opt/mssql"]
