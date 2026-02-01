@@ -7,7 +7,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/ImportationCalendrier/bin/Debug/net8.0/ImportationCalendrier.dll",
-            "args": ["StatsEquipe"],
+            "args": ["Calendrier"],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"
@@ -22,7 +22,7 @@
             "preLaunchTask": "build",
             // Si vous avez modifié la version cible de .Net Framework, veillez à mettre à jour le chemin d’accès du programme.
             "program": "${workspaceFolder}/ServiceLigueHockeySqlServer/bin/Debug/net8.0/ServiceLigueHockeySqlServer.dll",
-            "args": ["StatsEquipe"],
+            "args": ["Calendrier"],
             "cwd": "${workspaceFolder}/ServiceLigueHockeySqlServer",
             "stopAtEntry": false,
             // Activez le lancement d’un navigateur web au démarrage de ASP.NET Core. Pour plus d’informations : https://aka.ms/VSCode-CS-LaunchJson-WebBrowser

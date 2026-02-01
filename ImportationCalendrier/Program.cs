@@ -14,7 +14,10 @@ namespace ServiceLigueHockeySqlServer.ImportationDonnees
         {
             if (!args.Any())
             {
-                Console.WriteLine("Ça prend un paramètre au programme.\n");
+                Console.WriteLine("Ça prend un paramètre au programme.");
+                Console.WriteLine("Veuillez passer un des paramètres suivants :");
+                Console.WriteLine("1)Calendrier;");
+                Console.WriteLine("2)StatsEquipe\n");
                 return;
             }
 
