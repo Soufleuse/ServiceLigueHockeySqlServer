@@ -1,22 +1,8 @@
-# ServiceLigueHockeySqlServer
-# C'est une version SQL Server de ServiceLigueHockey, simplement.
-# Construire l'image
-docker build --no-cache -t service-boutique-qc .
--- ou --
-docker compose -f docker-compose.yml build --no-cache
+Main README - README principal
 
-# Rouler l'image.
-# En dev
-docker-compose -f docker-compose.yml up -d
+This is the main README. This is simply present to tell you an english version of the
+README is in README-en.md. The french version is in README-fr.md.
 
-# Stopper l'image
-docker-compose -f docker-compose.yml down
-
-# Fouilles-moi pourquoi, il y a deux problèmes avec ce projet.
-# 1-Le script d'initialisation de BD n'a pas réussi à créer le user lemste ni
-#   à l'assigner à LigueHockey; mais si je fais un docker exec sur le
-#   conteneur pour ajouter ce user et à l'assigner, ça marche (!). 
-# 2-Les migrations ne fonctionnent pas quand on laisse Program.cs s'en
-#   charger; mais si on fait un dotnet ef database update avec une chaîne
-#   de connexion qui pointe sur la bonne BD (et surtout le bon port),
-#   ça marche.
+Ceci est le README principal. Il est présent simplement pour indiquer d'aller dans le
+README.en pour la version anglaise et dans le README.en et le README français est dans
+README.fr.

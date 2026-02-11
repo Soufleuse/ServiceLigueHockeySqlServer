@@ -5,7 +5,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>c77f1d63-b4a0-4f12-ae49-e7e50cab0a8e</UserSecretsId>
-	<GenerateRuntimeConfigurationFiles>True</GenerateRuntimeConfigurationFiles>
+	  <GenerateRuntimeConfigurationFiles>True</GenerateRuntimeConfigurationFiles>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <InformationalVersion>1.0.0-RC1</InformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>
