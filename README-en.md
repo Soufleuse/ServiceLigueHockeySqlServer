@@ -7,8 +7,8 @@ database.
 
 This is an example of my skills to code REST API in C# with a SQL Server database
 storing the data. At the moment of writing, most of the APIs have been coded
-alongside a Dockerfile and Entity Framework migrations. Some unit tests are
-under way of coding and should be visible in a foreseable future.
+alongside a Dockerfile to make these API conteneurized and Entity Framework migrations.
+Some unit tests areunder way of coding and should be visible in a foreseable future.
 
 ## Getting Started
 

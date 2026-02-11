@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLigueHockeySqlServer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportationCalendrier", "ImportationCalendrier\ImportationCalendrier.csproj", "{433652C3-1E60-40CC-B3B5-FD460C483C97}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLigueHockeyTest", "ServiceLigueHockeyTest\ServiceLigueHockeyTest.csproj", "{7C1DED2C-36BF-44C0-9917-EA3A78185729}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,18 @@ Global
 		{433652C3-1E60-40CC-B3B5-FD460C483C97}.Release|x64.Build.0 = Release|Any CPU
 		{433652C3-1E60-40CC-B3B5-FD460C483C97}.Release|x86.ActiveCfg = Release|Any CPU
 		{433652C3-1E60-40CC-B3B5-FD460C483C97}.Release|x86.Build.0 = Release|Any CPU
+		{7C1DED2C-36BF-44C0-9917-EA3A78185729}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C1DED2C-36BF-44C0-9917-EA3A78185729}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C1DED2C-36BF-44C0-9917-EA3A78185729}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7C1DED2C-36BF-44C0-9917-EA3A78185729}.Debug|x64.Build.0 = Debug|Any CPU
+		{7C1DED2C-36BF-44C0-9917-EA3A78185729}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7C1DED2C-36BF-44C0-9917-EA3A78185729}.Debug|x86.Build.0 = Debug|Any CPU
+		{7C1DED2C-36BF-44C0-9917-EA3A78185729}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C1DED2C-36BF-44C0-9917-EA3A78185729}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C1DED2C-36BF-44C0-9917-EA3A78185729}.Release|x64.ActiveCfg = Release|Any CPU
+		{7C1DED2C-36BF-44C0-9917-EA3A78185729}.Release|x64.Build.0 = Release|Any CPU
+		{7C1DED2C-36BF-44C0-9917-EA3A78185729}.Release|x86.ActiveCfg = Release|Any CPU
+		{7C1DED2C-36BF-44C0-9917-EA3A78185729}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
