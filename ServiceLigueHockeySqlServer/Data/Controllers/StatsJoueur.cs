@@ -23,7 +23,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
         // GET: api/StatsJoueur/parannee/2020
         [HttpGet("parannee/{annee}")]
-        public ActionResult<IEnumerable<StatsJoueurDto>> GetStatsJoueurBd(short annee)
+        public ActionResult<IEnumerable<StatsJoueurDto>> GetStatsJoueur(short annee)
         {
             this._logger.LogInformation("--- Début GetStatsJoueurBd ---");
 
@@ -80,7 +80,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
         // GET: api/StatsJoueur/5/2020
         [HttpGet("{id}/{anneeStats}")]
-        public ActionResult<StatsJoueurDto> GetStatsJoueurBd(int id, short anneeStats)
+        public ActionResult<StatsJoueurDto> GetStatsJoueur(int id, short anneeStats)
         {
             this._logger.LogInformation("--- Début GetStatsJoueurBd avec id et anneeStats ---");
 
@@ -137,7 +137,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         // PUT: api/StatsJoueur/5/2023
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}/{annee}")]
-        public async Task<IActionResult> PutStatsJoueurBd(int id, short annee, StatsJoueurDto statsJoueurDto)
+        public async Task<IActionResult> PutStatsJoueur(int id, short annee, StatsJoueurDto statsJoueurDto)
         {
             this._logger.LogInformation("--- Début PutStatsJoueurBd ---");
 
@@ -215,7 +215,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
         // POST: api/StatsJoueur
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<StatsJoueurDto>> PostStatsJoueurBd(StatsJoueurDto statsJoueurDto)
+        public async Task<ActionResult<StatsJoueurDto>> PostStatsJoueur(StatsJoueurDto statsJoueurDto)
         {
             this._logger.LogInformation("--- Début PostStatsJoueurBd ---");
 
@@ -302,7 +302,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
         // DELETE: api/StatsJoueur/5
         [HttpDelete("{id}/{annee}")]
-        public async Task<IActionResult> DeleteStatsJoueurBd(int id, short annee)
+        public async Task<IActionResult> DeleteStatsJoueur(int id, short annee)
         {
             this._logger.LogInformation("--- Début DeleteStatsJoueurBd ---");
             var statsJoueurBd = await _context.statsJoueurBd.FindAsync(id, annee);
