@@ -30,9 +30,9 @@ namespace ServiceLigueHockeySqlServer.Data.Models
         public virtual ICollection<PointeursBd> listePointeurs { get; set; } = default!;
         public virtual ICollection<PenalitesBd> listePenalites { get; set; } = default!;
         
-        public int IdEquipeHote { get; set; } = default;
+        public int IdEquipeHote { get; set; } = default!;
         public virtual EquipeBd EquipeHote { get; set; } = default!;
-        public int IdEquipeVisiteuse { get; set; } = default;
+        public int IdEquipeVisiteuse { get; set; } = default!;
         public virtual EquipeBd EquipeVisiteuse { get; set; } = default!;
     }
 }

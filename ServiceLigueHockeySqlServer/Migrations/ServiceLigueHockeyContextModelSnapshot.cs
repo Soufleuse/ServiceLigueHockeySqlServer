@@ -44,6 +44,12 @@ namespace ServiceLigueHockeySqlServer.Migrations
                     b.HasData(
                         new
                         {
+                            AnneeStats = (short)2025,
+                            DescnCourte = "2025/2026",
+                            DescnLongue = "Représente la saison 2025/2026"
+                        },
+                        new
+                        {
                             AnneeStats = (short)2024,
                             DescnCourte = "2024/2025",
                             DescnLongue = "Représente la saison 2024/2025"
@@ -266,7 +272,10 @@ namespace ServiceLigueHockeySqlServer.Migrations
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.EquipeBd", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AnneeDebut")
                         .HasColumnType("int");
@@ -352,11 +361,11 @@ namespace ServiceLigueHockeySqlServer.Migrations
 
             modelBuilder.Entity("ServiceLigueHockeySqlServer.Data.Models.EquipeJoueurBd", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("EquipeId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("JoueurId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DateDebutAvecEquipe")
                         .HasColumnType("datetime2");
@@ -364,127 +373,121 @@ namespace ServiceLigueHockeySqlServer.Migrations
                     b.Property<DateTime?>("DateFinAvecEquipe")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EquipeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("JoueurId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.Property<short>("NoDossard")
                         .HasColumnType("smallint");
 
-                    b.HasKey("Id");
+                    b.HasKey("EquipeId", "JoueurId", "DateDebutAvecEquipe");
 
                     b.HasIndex("JoueurId");
-
-                    b.HasIndex("EquipeId", "JoueurId", "DateDebutAvecEquipe")
-                        .IsUnique();
 
                     b.ToTable("EquipeJoueur", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            DateDebutAvecEquipe = new DateTime(2008, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 1,
                             JoueurId = 1,
+                            DateDebutAvecEquipe = new DateTime(2008, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)23
                         },
                         new
                         {
-                            Id = 2,
-                            DateDebutAvecEquipe = new DateTime(2016, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 1,
                             JoueurId = 2,
+                            DateDebutAvecEquipe = new DateTime(2016, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)24
                         },
                         new
                         {
-                            Id = 3,
-                            DateDebutAvecEquipe = new DateTime(2017, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 1,
                             JoueurId = 3,
+                            DateDebutAvecEquipe = new DateTime(2017, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)25
                         },
                         new
                         {
-                            Id = 4,
-                            DateDebutAvecEquipe = new DateTime(2013, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 1,
                             JoueurId = 4,
+                            DateDebutAvecEquipe = new DateTime(2013, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)26
                         },
                         new
                         {
-                            Id = 5,
-                            DateDebutAvecEquipe = new DateTime(2014, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 2,
                             JoueurId = 5,
+                            DateDebutAvecEquipe = new DateTime(2014, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)27
                         },
                         new
                         {
-                            Id = 6,
-                            DateDebutAvecEquipe = new DateTime(2020, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 2,
                             JoueurId = 6,
+                            DateDebutAvecEquipe = new DateTime(2020, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)28
                         },
                         new
                         {
-                            Id = 7,
-                            DateDebutAvecEquipe = new DateTime(2018, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 2,
                             JoueurId = 7,
+                            DateDebutAvecEquipe = new DateTime(2018, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)29
                         },
                         new
                         {
-                            Id = 8,
-                            DateDebutAvecEquipe = new DateTime(2010, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 2,
                             JoueurId = 8,
+                            DateDebutAvecEquipe = new DateTime(2010, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)30
                         },
                         new
                         {
-                            Id = 9,
-                            DateDebutAvecEquipe = new DateTime(2018, 4, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 3,
                             JoueurId = 9,
+                            DateDebutAvecEquipe = new DateTime(2018, 4, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)31
                         },
                         new
                         {
-                            Id = 10,
-                            DateDebutAvecEquipe = new DateTime(2018, 2, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 3,
                             JoueurId = 10,
+                            DateDebutAvecEquipe = new DateTime(2018, 2, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)32
                         },
                         new
                         {
-                            Id = 11,
-                            DateDebutAvecEquipe = new DateTime(2018, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 3,
                             JoueurId = 11,
+                            DateDebutAvecEquipe = new DateTime(2018, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)33
                         },
                         new
                         {
-                            Id = 12,
-                            DateDebutAvecEquipe = new DateTime(2011, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 4,
                             JoueurId = 12,
+                            DateDebutAvecEquipe = new DateTime(2011, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)34
                         },
                         new
                         {
-                            Id = 13,
-                            DateDebutAvecEquipe = new DateTime(2012, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EquipeId = 4,
                             JoueurId = 13,
+                            DateDebutAvecEquipe = new DateTime(2012, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
                             NoDossard = (short)35
                         });
                 });
@@ -825,12 +828,265 @@ namespace ServiceLigueHockeySqlServer.Migrations
                         {
                             EquipeId = 1,
                             AnneeStats = (short)2023,
-                            NbButsContre = (short)199,
-                            NbButsPour = (short)499,
+                            NbButsContre = (short)267,
+                            NbButsPour = (short)380,
                             NbDefProlo = (short)12,
-                            NbDefaites = (short)10,
+                            NbDefaites = (short)20,
                             NbPartiesJouees = (short)82,
-                            NbVictoires = (short)60
+                            NbVictoires = (short)50
+                        },
+                        new
+                        {
+                            EquipeId = 2,
+                            AnneeStats = (short)2023,
+                            NbButsContre = (short)287,
+                            NbButsPour = (short)315,
+                            NbDefProlo = (short)11,
+                            NbDefaites = (short)26,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)45
+                        },
+                        new
+                        {
+                            EquipeId = 3,
+                            AnneeStats = (short)2023,
+                            NbButsContre = (short)307,
+                            NbButsPour = (short)300,
+                            NbDefProlo = (short)8,
+                            NbDefaites = (short)30,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)44
+                        },
+                        new
+                        {
+                            EquipeId = 4,
+                            AnneeStats = (short)2023,
+                            NbButsContre = (short)337,
+                            NbButsPour = (short)280,
+                            NbDefProlo = (short)8,
+                            NbDefaites = (short)40,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)34
+                        },
+                        new
+                        {
+                            EquipeId = 1,
+                            AnneeStats = (short)2022,
+                            NbButsContre = (short)267,
+                            NbButsPour = (short)380,
+                            NbDefProlo = (short)12,
+                            NbDefaites = (short)20,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)50
+                        },
+                        new
+                        {
+                            EquipeId = 2,
+                            AnneeStats = (short)2022,
+                            NbButsContre = (short)287,
+                            NbButsPour = (short)315,
+                            NbDefProlo = (short)11,
+                            NbDefaites = (short)26,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)45
+                        },
+                        new
+                        {
+                            EquipeId = 3,
+                            AnneeStats = (short)2022,
+                            NbButsContre = (short)307,
+                            NbButsPour = (short)300,
+                            NbDefProlo = (short)8,
+                            NbDefaites = (short)30,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)44
+                        },
+                        new
+                        {
+                            EquipeId = 4,
+                            AnneeStats = (short)2022,
+                            NbButsContre = (short)337,
+                            NbButsPour = (short)280,
+                            NbDefProlo = (short)8,
+                            NbDefaites = (short)40,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)34
+                        },
+                        new
+                        {
+                            EquipeId = 1,
+                            AnneeStats = (short)2021,
+                            NbButsContre = (short)267,
+                            NbButsPour = (short)380,
+                            NbDefProlo = (short)12,
+                            NbDefaites = (short)20,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)50
+                        },
+                        new
+                        {
+                            EquipeId = 2,
+                            AnneeStats = (short)2021,
+                            NbButsContre = (short)287,
+                            NbButsPour = (short)315,
+                            NbDefProlo = (short)11,
+                            NbDefaites = (short)26,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)45
+                        },
+                        new
+                        {
+                            EquipeId = 3,
+                            AnneeStats = (short)2021,
+                            NbButsContre = (short)307,
+                            NbButsPour = (short)300,
+                            NbDefProlo = (short)8,
+                            NbDefaites = (short)30,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)44
+                        },
+                        new
+                        {
+                            EquipeId = 4,
+                            AnneeStats = (short)2021,
+                            NbButsContre = (short)337,
+                            NbButsPour = (short)280,
+                            NbDefProlo = (short)8,
+                            NbDefaites = (short)40,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)34
+                        },
+                        new
+                        {
+                            EquipeId = 1,
+                            AnneeStats = (short)2020,
+                            NbButsContre = (short)267,
+                            NbButsPour = (short)380,
+                            NbDefProlo = (short)12,
+                            NbDefaites = (short)20,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)50
+                        },
+                        new
+                        {
+                            EquipeId = 2,
+                            AnneeStats = (short)2020,
+                            NbButsContre = (short)287,
+                            NbButsPour = (short)315,
+                            NbDefProlo = (short)11,
+                            NbDefaites = (short)26,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)45
+                        },
+                        new
+                        {
+                            EquipeId = 3,
+                            AnneeStats = (short)2020,
+                            NbButsContre = (short)307,
+                            NbButsPour = (short)300,
+                            NbDefProlo = (short)8,
+                            NbDefaites = (short)30,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)44
+                        },
+                        new
+                        {
+                            EquipeId = 4,
+                            AnneeStats = (short)2020,
+                            NbButsContre = (short)337,
+                            NbButsPour = (short)280,
+                            NbDefProlo = (short)8,
+                            NbDefaites = (short)40,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)34
+                        },
+                        new
+                        {
+                            EquipeId = 1,
+                            AnneeStats = (short)2019,
+                            NbButsContre = (short)290,
+                            NbButsPour = (short)330,
+                            NbDefProlo = (short)10,
+                            NbDefaites = (short)29,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)43
+                        },
+                        new
+                        {
+                            EquipeId = 2,
+                            AnneeStats = (short)2019,
+                            NbButsContre = (short)255,
+                            NbButsPour = (short)345,
+                            NbDefProlo = (short)13,
+                            NbDefaites = (short)21,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)48
+                        },
+                        new
+                        {
+                            EquipeId = 3,
+                            AnneeStats = (short)2019,
+                            NbButsContre = (short)295,
+                            NbButsPour = (short)320,
+                            NbDefProlo = (short)10,
+                            NbDefaites = (short)26,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)46
+                        },
+                        new
+                        {
+                            EquipeId = 4,
+                            AnneeStats = (short)2019,
+                            NbButsContre = (short)307,
+                            NbButsPour = (short)311,
+                            NbDefProlo = (short)11,
+                            NbDefaites = (short)33,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)38
+                        },
+                        new
+                        {
+                            EquipeId = 1,
+                            AnneeStats = (short)2018,
+                            NbButsContre = (short)312,
+                            NbButsPour = (short)310,
+                            NbDefProlo = (short)15,
+                            NbDefaites = (short)34,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)33
+                        },
+                        new
+                        {
+                            EquipeId = 2,
+                            AnneeStats = (short)2018,
+                            NbButsContre = (short)275,
+                            NbButsPour = (short)340,
+                            NbDefProlo = (short)14,
+                            NbDefaites = (short)23,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)45
+                        },
+                        new
+                        {
+                            EquipeId = 3,
+                            AnneeStats = (short)2018,
+                            NbButsContre = (short)298,
+                            NbButsPour = (short)340,
+                            NbDefProlo = (short)9,
+                            NbDefaites = (short)26,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)47
+                        },
+                        new
+                        {
+                            EquipeId = 4,
+                            AnneeStats = (short)2018,
+                            NbButsContre = (short)280,
+                            NbButsPour = (short)341,
+                            NbDefProlo = (short)10,
+                            NbDefaites = (short)31,
+                            NbPartiesJouees = (short)82,
+                            NbVictoires = (short)41
                         });
                 });
 
@@ -891,6 +1147,234 @@ namespace ServiceLigueHockeySqlServer.Migrations
                     b.ToTable("StatsJoueur", (string)null);
 
                     b.HasData(
+                        new
+                        {
+                            JoueurId = 1,
+                            EquipeId = 1,
+                            AnneeStats = (short)2023,
+                            ButsAlloues = 0,
+                            Defaites = (short)0,
+                            DefaitesEnProlongation = (short)0,
+                            MinutesJouees = 500.0,
+                            NbButs = (short)10,
+                            NbMinutesPenalites = (short)15,
+                            NbPartiesJouees = (short)25,
+                            NbPasses = (short)20,
+                            NbPoints = (short)30,
+                            Nulles = (short)0,
+                            PlusseMoins = (short)5,
+                            TirsAlloues = 0,
+                            Victoires = (short)0
+                        },
+                        new
+                        {
+                            JoueurId = 2,
+                            EquipeId = 1,
+                            AnneeStats = (short)2023,
+                            ButsAlloues = 0,
+                            Defaites = (short)0,
+                            DefaitesEnProlongation = (short)0,
+                            MinutesJouees = 500.0,
+                            NbButs = (short)15,
+                            NbMinutesPenalites = (short)51,
+                            NbPartiesJouees = (short)25,
+                            NbPasses = (short)10,
+                            NbPoints = (short)25,
+                            Nulles = (short)0,
+                            PlusseMoins = (short)-2,
+                            TirsAlloues = 0,
+                            Victoires = (short)0
+                        },
+                        new
+                        {
+                            JoueurId = 3,
+                            EquipeId = 1,
+                            AnneeStats = (short)2023,
+                            ButsAlloues = 0,
+                            Defaites = (short)0,
+                            DefaitesEnProlongation = (short)0,
+                            MinutesJouees = 500.0,
+                            NbButs = (short)5,
+                            NbMinutesPenalites = (short)35,
+                            NbPartiesJouees = (short)25,
+                            NbPasses = (short)24,
+                            NbPoints = (short)29,
+                            Nulles = (short)0,
+                            PlusseMoins = (short)25,
+                            TirsAlloues = 0,
+                            Victoires = (short)0
+                        },
+                        new
+                        {
+                            JoueurId = 4,
+                            EquipeId = 1,
+                            AnneeStats = (short)2023,
+                            ButsAlloues = 53,
+                            Defaites = (short)2,
+                            DefaitesEnProlongation = (short)6,
+                            MinutesJouees = 1500.0,
+                            NbButs = (short)0,
+                            NbMinutesPenalites = (short)4,
+                            NbPartiesJouees = (short)25,
+                            NbPasses = (short)0,
+                            NbPoints = (short)0,
+                            Nulles = (short)0,
+                            PlusseMoins = (short)0,
+                            TirsAlloues = 564,
+                            Victoires = (short)9
+                        },
+                        new
+                        {
+                            JoueurId = 1,
+                            EquipeId = 1,
+                            AnneeStats = (short)2022,
+                            ButsAlloues = 0,
+                            Defaites = (short)0,
+                            DefaitesEnProlongation = (short)0,
+                            MinutesJouees = 500.0,
+                            NbButs = (short)10,
+                            NbMinutesPenalites = (short)15,
+                            NbPartiesJouees = (short)25,
+                            NbPasses = (short)20,
+                            NbPoints = (short)30,
+                            Nulles = (short)0,
+                            PlusseMoins = (short)5,
+                            TirsAlloues = 0,
+                            Victoires = (short)0
+                        },
+                        new
+                        {
+                            JoueurId = 2,
+                            EquipeId = 1,
+                            AnneeStats = (short)2022,
+                            ButsAlloues = 0,
+                            Defaites = (short)0,
+                            DefaitesEnProlongation = (short)0,
+                            MinutesJouees = 500.0,
+                            NbButs = (short)15,
+                            NbMinutesPenalites = (short)51,
+                            NbPartiesJouees = (short)25,
+                            NbPasses = (short)10,
+                            NbPoints = (short)25,
+                            Nulles = (short)0,
+                            PlusseMoins = (short)-2,
+                            TirsAlloues = 0,
+                            Victoires = (short)0
+                        },
+                        new
+                        {
+                            JoueurId = 3,
+                            EquipeId = 1,
+                            AnneeStats = (short)2022,
+                            ButsAlloues = 0,
+                            Defaites = (short)0,
+                            DefaitesEnProlongation = (short)0,
+                            MinutesJouees = 500.0,
+                            NbButs = (short)5,
+                            NbMinutesPenalites = (short)35,
+                            NbPartiesJouees = (short)25,
+                            NbPasses = (short)24,
+                            NbPoints = (short)29,
+                            Nulles = (short)0,
+                            PlusseMoins = (short)25,
+                            TirsAlloues = 0,
+                            Victoires = (short)0
+                        },
+                        new
+                        {
+                            JoueurId = 4,
+                            EquipeId = 1,
+                            AnneeStats = (short)2022,
+                            ButsAlloues = 53,
+                            Defaites = (short)2,
+                            DefaitesEnProlongation = (short)6,
+                            MinutesJouees = 1500.0,
+                            NbButs = (short)0,
+                            NbMinutesPenalites = (short)4,
+                            NbPartiesJouees = (short)25,
+                            NbPasses = (short)0,
+                            NbPoints = (short)0,
+                            Nulles = (short)0,
+                            PlusseMoins = (short)0,
+                            TirsAlloues = 564,
+                            Victoires = (short)9
+                        },
+                        new
+                        {
+                            JoueurId = 1,
+                            EquipeId = 1,
+                            AnneeStats = (short)2021,
+                            ButsAlloues = 0,
+                            Defaites = (short)0,
+                            DefaitesEnProlongation = (short)0,
+                            MinutesJouees = 500.0,
+                            NbButs = (short)10,
+                            NbMinutesPenalites = (short)15,
+                            NbPartiesJouees = (short)25,
+                            NbPasses = (short)20,
+                            NbPoints = (short)30,
+                            Nulles = (short)0,
+                            PlusseMoins = (short)5,
+                            TirsAlloues = 0,
+                            Victoires = (short)0
+                        },
+                        new
+                        {
+                            JoueurId = 2,
+                            EquipeId = 1,
+                            AnneeStats = (short)2021,
+                            ButsAlloues = 0,
+                            Defaites = (short)0,
+                            DefaitesEnProlongation = (short)0,
+                            MinutesJouees = 500.0,
+                            NbButs = (short)15,
+                            NbMinutesPenalites = (short)51,
+                            NbPartiesJouees = (short)25,
+                            NbPasses = (short)10,
+                            NbPoints = (short)25,
+                            Nulles = (short)0,
+                            PlusseMoins = (short)-2,
+                            TirsAlloues = 0,
+                            Victoires = (short)0
+                        },
+                        new
+                        {
+                            JoueurId = 3,
+                            EquipeId = 1,
+                            AnneeStats = (short)2021,
+                            ButsAlloues = 0,
+                            Defaites = (short)0,
+                            DefaitesEnProlongation = (short)0,
+                            MinutesJouees = 500.0,
+                            NbButs = (short)5,
+                            NbMinutesPenalites = (short)35,
+                            NbPartiesJouees = (short)25,
+                            NbPasses = (short)24,
+                            NbPoints = (short)29,
+                            Nulles = (short)0,
+                            PlusseMoins = (short)25,
+                            TirsAlloues = 0,
+                            Victoires = (short)0
+                        },
+                        new
+                        {
+                            JoueurId = 4,
+                            EquipeId = 1,
+                            AnneeStats = (short)2021,
+                            ButsAlloues = 53,
+                            Defaites = (short)2,
+                            DefaitesEnProlongation = (short)6,
+                            MinutesJouees = 1500.0,
+                            NbButs = (short)0,
+                            NbMinutesPenalites = (short)4,
+                            NbPartiesJouees = (short)25,
+                            NbPasses = (short)0,
+                            NbPoints = (short)0,
+                            Nulles = (short)0,
+                            PlusseMoins = (short)0,
+                            TirsAlloues = 564,
+                            Victoires = (short)9
+                        },
                         new
                         {
                             JoueurId = 1,
@@ -1202,7 +1686,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
                     b.HasOne("ServiceLigueHockeySqlServer.Data.Models.DivisionBd", "division")
                         .WithMany("listeEquipeBd")
                         .HasForeignKey("DivisionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("division");
@@ -1213,7 +1697,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
                     b.HasOne("ServiceLigueHockeySqlServer.Data.Models.EquipeBd", "Equipe")
                         .WithMany("listeEquipeJoueur")
                         .HasForeignKey("EquipeId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ServiceLigueHockeySqlServer.Data.Models.JoueurBd", "Joueur")
@@ -1251,7 +1735,7 @@ namespace ServiceLigueHockeySqlServer.Migrations
                     b.HasOne("ServiceLigueHockeySqlServer.Data.Models.JoueurBd", "joueurPenalise")
                         .WithMany("listePenalites")
                         .HasForeignKey("IdJoueurPenalise")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ServiceLigueHockeySqlServer.Data.Models.CalendrierBd", "MonCalendrier")
