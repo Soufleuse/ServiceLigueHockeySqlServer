@@ -210,7 +210,7 @@ namespace ServiceLigueHockeySqlServer.Data.Controllers
 
             var equipeBd = new EquipeBd
             {
-                Id = equipe.Id,
+                //Id = equipe.Id,
                 NomEquipe = equipe.NomEquipe,
                 Ville = equipe.Ville,
                 AnneeDebut = equipe.AnneeDebut,
